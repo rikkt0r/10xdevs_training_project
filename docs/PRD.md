@@ -298,6 +298,7 @@ External ticket stubs kept indefinitely.
 | SMTP_DEFAULTS | Default SMTP configuration |
 | RATE_LIMIT_* | Rate limiting thresholds |
 | DUPLICATE_EMAIL_THRESHOLD | Time window for duplicate email prevention |
+| ENCRYPTION_KEY | AES-256-GCM key for encrypting sensitive data (IMAP/SMTP passwords, API tokens) |
 
 ---
 
@@ -412,7 +413,7 @@ External ticket stubs kept indefinitely.
 ### ExternalTicket
 - id, board_id, uuid (secret), title, creator_email, external_url, created_at
 
-**Note:** UUID must be unique across both Ticket and ExternalTicket tables. On generation, check for conflicts and retry with new UUID if collision detected.
+**Note:** UUID must be unique across both Ticket and ExternalTicket tables. Enforced at application level: on generation, check both tables for conflicts and retry with new UUID if collision detected.
 
 ### StandbyQueueItem
 - id, manager_id, email_subject, email_body, sender_email, failure_reason, created_at
@@ -455,3 +456,5 @@ External ticket stubs kept indefinitely.
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 0.1 | 2026-01-17 | AI-assisted | Initial draft |
+| 0.2 | 2026-01-17 | AI-assisted | Added ENCRYPTION_KEY environment variable for AES-256-GCM encryption |
+| 0.3 | 2026-01-17 | AI-assisted | Clarified UUID uniqueness is enforced at application level |

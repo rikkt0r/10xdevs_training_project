@@ -1,6 +1,6 @@
-# AI Rules for {{project-name}}
+# AI Rules for Simple Issue Tracker
 
-{{project-description}}
+Description available in docs/PRD.md
 
 ## FRONTEND
 
