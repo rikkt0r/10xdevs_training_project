@@ -1,0 +1,4 @@
+# Claude Code context ignore file
+
+# Conversation history
+.history/
