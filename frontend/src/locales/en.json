@@ -1,0 +1,56 @@
+{
+  "app": {
+    "title": "Simple Issue Tracker",
+    "tagline": "Manage ticket boards and track issues"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "forgotPassword": "Forgot Password?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "boards": "Boards",
+    "recentTickets": "Recent Tickets",
+    "standbyQueue": "Standby Queue"
+  },
+  "boards": {
+    "title": "Boards",
+    "create": "Create Board",
+    "edit": "Edit Board",
+    "delete": "Delete Board",
+    "archive": "Archive Board",
+    "name": "Board Name",
+    "uniqueName": "Unique Name (URL Slug)",
+    "greetingMessage": "Greeting Message",
+    "keywords": "Keywords",
+    "externalPlatform": "External Platform"
+  },
+  "tickets": {
+    "title": "Tickets",
+    "create": "Create Ticket",
+    "view": "View Ticket",
+    "state": "State",
+    "new": "New",
+    "inProgress": "In Progress",
+    "closed": "Closed",
+    "rejected": "Rejected",
+    "description": "Description",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "app": {
+    "title": "Prosty System Zgłoszeń",
+    "tagline": "Zarządzaj tablicami zgłoszeń i śledź problemy"
+  },
+  "auth": {
+    "login": "Zaloguj się",
+    "logout": "Wyloguj się",
+    "register": "Zarejestruj się",
+    "email": "E-mail",
+    "password": "Hasło",
+    "name": "Imię",
+    "forgotPassword": "Zapomniałeś hasła?"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "boards": "Tablice",
+    "recentTickets": "Ostatnie zgłoszenia",
+    "standbyQueue": "Kolejka oczekująca"
+  },
+  "boards": {
+    "title": "Tablice",
+    "create": "Utwórz tablicę",
+    "edit": "Edytuj tablicę",
+    "delete": "Usuń tablicę",
+    "archive": "Archiwizuj tablicę",
+    "name": "Nazwa tablicy",
+    "uniqueName": "Unikalna nazwa (slug URL)",
+    "greetingMessage": "Wiadomość powitalna",
+    "keywords": "Słowa kluczowe",
+    "externalPlatform": "Platforma zewnętrzna"
+  },
+  "tickets": {
+    "title": "Zgłoszenia",
+    "create": "Utwórz zgłoszenie",
+    "view": "Zobacz zgłoszenie",
+    "state": "Status",
+    "new": "Nowe",
+    "inProgress": "W trakcie",
+    "closed": "Zamknięte",
+    "rejected": "Odrzucone",
+    "description": "Opis",
+    "createdAt": "Utworzono",
+    "updatedAt": "Zaktualizowano"
+  },
+  "common": {
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "submit": "Wyślij",
+    "loading": "Ładowanie...",
+    "error": "Błąd",
+    "success": "Sukces"
+  }
+}
