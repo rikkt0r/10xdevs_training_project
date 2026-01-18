@@ -74,6 +74,15 @@ Description available in docs/PRD.md
 
 ### Guidelines for PYTHON
 
+#### PROJECT_STRUCTURE
+
+- The virtualenv is located at `<project-root>/backend/venv`
+- Always change directory to `<project-root>/backend` before running Python code, migrations, or any backend commands
+- All configuration files (alembic.ini, etc.) are located in the `<project-root>/backend` directory
+- Activate virtualenv using `source venv/bin/activate` from within the backend directory
+- Development database is available from project docker-compose. If unable to connect to database, run `docker compose up -d db` from `<project-root>`
+- **IMPORTANT**: Always run Alembic migrations and any database-related commands with `dangerouslyDisableSandbox: true` because sandbox mode blocks network connections to localhost
+
 #### FASTAPI
 
 - Use Pydantic models for request and response validation with strict type checking and custom validators
