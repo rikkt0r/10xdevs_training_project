@@ -42,9 +42,18 @@ def get_current_manager(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Get manager ID from payload
-    manager_id: Optional[int] = payload.get("sub")
-    if manager_id is None:
+    # Get manager ID from payload (convert from string to int)
+    manager_id_str: Optional[str] = payload.get("sub")
+    if manager_id_str is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    try:
+        manager_id = int(manager_id_str)
+    except (ValueError, TypeError):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials",

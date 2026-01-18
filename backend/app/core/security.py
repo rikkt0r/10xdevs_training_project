@@ -28,20 +28,25 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     """
     Create a JWT access token.
-    
+
     Args:
         data: Dictionary containing the claims to encode
         expires_delta: Optional expiration time delta
-        
+
     Returns:
         Encoded JWT token string
     """
     to_encode = data.copy()
+
+    # Ensure 'sub' claim is a string (JWT spec requires it)
+    if "sub" in to_encode and not isinstance(to_encode["sub"], str):
+        to_encode["sub"] = str(to_encode["sub"])
+
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(hours=settings.JWT_EXPIRY_HOURS)
-    
+
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(
         to_encode,

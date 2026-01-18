@@ -129,6 +129,20 @@ Description available in docs/PRD.md
 
 ## TESTING
 
+### Guidelines for TEST_ORGANIZATION
+
+#### TEST_STRUCTURE
+
+- Tests must be organized in `tests/` subdirectories within each module, NOT in a centralized tests directory
+- Pattern: `app/module_name/tests/test_*.py` (e.g., `app/services/tests/test_auth_service.py`)
+- Each module's `tests/` directory must have an `__init__.py` file
+- Shared fixtures and test configuration go in `<project-root>/backend/conftest.py`
+- Examples:
+  - `app/api/endpoints/auth.py` → `app/api/endpoints/tests/test_auth.py`
+  - `app/services/auth_service.py` → `app/services/tests/test_auth_service.py`
+  - `app/models/manager.py` → `app/models/tests/test_manager.py`
+  - `app/core/security.py` → `app/core/tests/test_security.py`
+
 ### Guidelines for UNIT
 
 #### PYTEST

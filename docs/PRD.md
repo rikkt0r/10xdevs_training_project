@@ -8,7 +8,7 @@
 
 **Tech Stack:**
 - **Frontend:** React (JavaScript), Redux, Bootstrap (responsive)
-- **Backend:** Python 3.12, FastAPI, SQLAlchemy, Alembic
+- **Backend:** Python 3.13, FastAPI, SQLAlchemy, Alembic
 - **Database:** PostgreSQL
 - **Deployment:** Self-contained Docker container on DigitalOcean
 - **Node Version:** 22
@@ -365,7 +365,7 @@ External ticket stubs kept indefinitely.
 
 ### 6.2 Docker Configuration
 
-- Python 3.12 base
+- Python 3.13 base
 - Node 22 for frontend build
 - Single container architecture
 
