@@ -48,7 +48,12 @@ class Settings(BaseSettings):
     
     # Logging
     LOG_LEVEL: str = "INFO"
-    
+
+    # SMTP Defaults (optional)
+    SMTP_DEFAULT_HOST: str = "localhost"
+    SMTP_DEFAULT_PORT: int = 587
+    SMTP_DEFAULT_USE_TLS: bool = True
+
     class Config:
         env_file = ".env"
         case_sensitive = True
