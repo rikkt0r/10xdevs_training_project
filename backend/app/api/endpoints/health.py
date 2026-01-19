@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
 from app.core.database import engine
+from app.schemas.health import HealthyResponse, UnhealthyResponse, ComponentStatus
 
 router = APIRouter()
 
@@ -37,24 +38,26 @@ async def health_check():
         db_message = str(e)
 
     if is_healthy:
+        response = HealthyResponse(
+            status="healthy",
+            timestamp=timestamp
+        )
         return JSONResponse(
             status_code=200,
-            content={
-                "status": "healthy",
-                "timestamp": timestamp
-            }
+            content=response.model_dump()
         )
     else:
-        details["database"] = {
-            "status": db_status,
-            "message": db_message
-        }
+        details["database"] = ComponentStatus(
+            status=db_status,
+            message=db_message
+        )
 
+        response = UnhealthyResponse(
+            status="unhealthy",
+            timestamp=timestamp,
+            details=details
+        )
         return JSONResponse(
             status_code=503,
-            content={
-                "status": "unhealthy",
-                "timestamp": timestamp,
-                "details": details
-            }
+            content=response.model_dump()
         )

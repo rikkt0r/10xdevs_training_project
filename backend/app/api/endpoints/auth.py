@@ -58,14 +58,15 @@ async def register(
     await email_service.send_verification_email(manager.email, verification_token)
 
     # Prepare response
+    response_data = RegisterResponse(
+        id=manager.id,
+        email=manager.email,
+        name=manager.name,
+        email_verified=manager.email_verified_at is not None,
+        created_at=manager.created_at
+    )
     return {
-        "data": {
-            "id": manager.id,
-            "email": manager.email,
-            "name": manager.name,
-            "email_verified": manager.email_verified_at is not None,
-            "created_at": manager.created_at
-        },
+        "data": response_data.model_dump(),
         "message": "Verification email sent"
     }
 
@@ -117,18 +118,15 @@ def login(
     )
 
     # Prepare response
+    manager_info = ManagerInfo.model_validate(manager)
+    response_data = LoginResponse(
+        access_token=access_token,
+        token_type="bearer",
+        expires_in=settings.JWT_EXPIRY_HOURS * 3600,
+        manager=manager_info
+    )
     return {
-        "data": {
-            "access_token": access_token,
-            "token_type": "bearer",
-            "expires_in": settings.JWT_EXPIRY_HOURS * 3600,
-            "manager": {
-                "id": manager.id,
-                "email": manager.email,
-                "name": manager.name,
-                "timezone": manager.timezone
-            }
-        }
+        "data": response_data.model_dump()
     }
 
 
@@ -260,10 +258,11 @@ def refresh_token(
         expires_delta=timedelta(hours=settings.JWT_EXPIRY_HOURS)
     )
 
+    response_data = TokenResponse(
+        access_token=access_token,
+        token_type="bearer",
+        expires_in=settings.JWT_EXPIRY_HOURS * 3600
+    )
     return {
-        "data": {
-            "access_token": access_token,
-            "token_type": "bearer",
-            "expires_in": settings.JWT_EXPIRY_HOURS * 3600
-        }
+        "data": response_data.model_dump()
     }

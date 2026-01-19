@@ -86,11 +86,44 @@ Description available in docs/PRD.md
 #### FASTAPI
 
 - Use Pydantic models for request and response validation with strict type checking and custom validators
+- **Use Pydantic serialization instead of manual dictionary construction**: Always use `model_validate()` and `model_dump()` to serialize ORM models to response schemas, rather than manually constructing dictionaries with individual field assignments
 - Implement dependency injection for services and database sessions to improve testability and resource management
 - Use async endpoints for I/O-bound operations to improve throughput for {{high_load_endpoints}}
 - Leverage FastAPI's background tasks for non-critical operations that don't need to block the response
 - Implement proper exception handling with HTTPException and custom exception handlers for {{error_scenarios}}
 - Use path operation decorators consistently with appropriate HTTP methods (GET for retrieval, POST for creation, etc.)
+
+#### FASTAPI_SERIALIZATION
+
+**Prefer Pydantic serialization over manual dictionary construction:**
+
+Good (using Pydantic serialization):
+```python
+@router.get("/me")
+def get_profile(current_manager: Manager = Depends(get_current_manager)):
+    profile = ManagerProfileResponse.model_validate(current_manager)
+    return {"data": profile.model_dump()}
+```
+
+Bad (manual dictionary construction):
+```python
+@router.get("/me")
+def get_profile(current_manager: Manager = Depends(get_current_manager)):
+    return {
+        "data": {
+            "id": current_manager.id,
+            "email": current_manager.email,
+            "name": current_manager.name,
+            # ... many more fields
+        }
+    }
+```
+
+Benefits:
+- DRY principle - no field duplication
+- Type safety - Pydantic validates schema
+- Maintainability - schema changes propagate automatically
+- Consistency - same serialization logic everywhere
 
 ## DATABASE
 
