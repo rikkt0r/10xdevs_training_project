@@ -42,6 +42,11 @@ import app.services.auth_service as auth_service_module
 auth_service_module.hash_password = _test_hash_password
 auth_service_module.verify_password = _test_verify_password
 
+# Also patch in manager_service which imports these directly
+import app.services.manager_service as manager_service_module
+manager_service_module.hash_password = _test_hash_password
+manager_service_module.verify_password = _test_verify_password
+
 from app.core.database import Base, get_db
 from app.core.security import create_access_token, hash_string
 from app.main import app

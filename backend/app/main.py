@@ -7,8 +7,8 @@ from fastapi.staticfiles import StaticFiles
 import logging
 
 from app.core.config import settings
-from app.api.endpoints import auth, health
-# from app.api.endpoints import boards, tickets, inboxes, managers, public
+from app.api.endpoints import auth, health, managers
+# from app.api.endpoints import boards, tickets, inboxes, public
 
 # Configure logging
 logging.basicConfig(
@@ -38,7 +38,7 @@ app.add_middleware(
 # Include API routers
 app.include_router(health.router, tags=["Health"])
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
-# app.include_router(managers.router, prefix="/api", tags=["Managers"])
+app.include_router(managers.router, prefix="/api", tags=["Managers"])
 # app.include_router(inboxes.router, prefix="/api/inboxes", tags=["Email Inboxes"])
 # app.include_router(boards.router, prefix="/api/boards", tags=["Boards"])
 # app.include_router(tickets.router, prefix="/api/tickets", tags=["Tickets"])
