@@ -32,16 +32,9 @@ def get_profile(
     - Account status (suspended, email verified)
     - Creation timestamp
     """
+    profile = ManagerProfileResponse.model_validate(current_manager)
     return {
-        "data": {
-            "id": current_manager.id,
-            "email": current_manager.email,
-            "name": current_manager.name,
-            "timezone": current_manager.timezone,
-            "is_suspended": current_manager.is_suspended,
-            "email_verified_at": current_manager.email_verified_at,
-            "created_at": current_manager.created_at
-        }
+        "data": profile.model_dump()
     }
 
 
@@ -68,16 +61,9 @@ def update_profile(
         timezone=request.timezone
     )
 
+    profile = ManagerProfileResponse.model_validate(updated_manager)
     return {
-        "data": {
-            "id": updated_manager.id,
-            "email": updated_manager.email,
-            "name": updated_manager.name,
-            "timezone": updated_manager.timezone,
-            "is_suspended": updated_manager.is_suspended,
-            "email_verified_at": updated_manager.email_verified_at,
-            "created_at": updated_manager.created_at
-        }
+        "data": profile.model_dump()
     }
 
 

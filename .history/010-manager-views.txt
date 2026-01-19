@@ -253,3 +253,123 @@
   The implementation is production-ready and follows all project coding standards!
 
 ✻ Crunched for 3m 20s
+
+❯ try reimplementing "get_profile" view function to use "ManagerProfileResponse" serializer
+
+● I'll refactor the get_profile endpoint to use the ManagerProfileResponse serializer instead of manually constructing the dictionary.
+
+● Read(app/api/endpoints/managers.py)
+  ⎿  Read 142 lines
+
+● Update(app/api/endpoints/managers.py)
+  ⎿  Added 2 lines, removed 9 lines
+      32      - Account status (suspended, email verified)
+      33      - Creation timestamp
+      34      """
+      35 +    profile = ManagerProfileResponse.model_validate(current_manager)
+      36      return {
+      36 -        "data": {
+      37 -            "id": current_manager.id,
+      38 -            "email": current_manager.email,
+      39 -            "name": current_manager.name,
+      40 -            "timezone": current_manager.timezone,
+      41 -            "is_suspended": current_manager.is_suspended,
+      42 -            "email_verified_at": current_manager.email_verified_at,
+      43 -            "created_at": current_manager.created_at
+      44 -        }
+      37 +        "data": profile.model_dump()
+      38      }
+      39
+      40
+
+● Update(app/api/endpoints/managers.py)
+  ⎿  Added 2 lines, removed 9 lines
+      61          timezone=request.timezone
+      62      )
+      63
+      64 +    profile = ManagerProfileResponse.model_validate(updated_manager)
+      65      return {
+      65 -        "data": {
+      66 -            "id": updated_manager.id,
+      67 -            "email": updated_manager.email,
+      68 -            "name": updated_manager.name,
+      69 -            "timezone": updated_manager.timezone,
+      70 -            "is_suspended": updated_manager.is_suspended,
+      71 -            "email_verified_at": updated_manager.email_verified_at,
+      72 -            "created_at": updated_manager.created_at
+      73 -        }
+      66 +        "data": profile.model_dump()
+      67      }
+      68
+      69
+
+● Bash(source venv/bin/activate && python -m pytest app/api/endpoints/tests/test_managers.py::TestGetProfile -v)
+  ⎿  ============================= test session starts ==============================
+     platform linux -- Python 3.13.11, pytest-7.4.4, pluggy-1.6.0 -- /home/rikkt0r/projects/10xdevs_training_project/backend/venv/bin/python
+     cachedir: .pytest_cache
+     … +133 lines (ctrl+o to expand)
+
+● Bash(source venv/bin/activate && python -m pytest app/api/endpoints/tests/test_managers.py -v)
+  ⎿  ============================= test session starts ==============================
+     platform linux -- Python 3.13.11, pytest-7.4.4, pluggy-1.6.0 -- /home/rikkt0r/projects/10xdevs_training_project/backend/venv/bin/python
+     cachedir: .pytest_cache
+     … +167 lines (ctrl+o to expand)
+
+● Read(app/api/endpoints/managers.py)
+  ⎿  Read 50 lines
+
+● Read(app/api/endpoints/managers.py)
+  ⎿  Read 30 lines
+
+● Bash(source venv/bin/activate && python -m pytest app/api/endpoints/tests/ -v --tb=short -q)
+  ⎿  ============================= test session starts ==============================
+     platform linux -- Python 3.13.11, pytest-7.4.4, pluggy-1.6.0 -- /home/rikkt0r/projects/10xdevs_training_project/backend/venv/bin/python
+     cachedir: .pytest_cache
+     … +289 lines (ctrl+o to expand)
+
+● Perfect! I've successfully refactored both the get_profile and update_profile endpoints to use the ManagerProfileResponse serializer. Here's what changed:
+
+  Refactoring Summary
+
+  Before (Manual Dictionary Construction)
+
+  @router.get("/me", response_model=dict, status_code=status.HTTP_200_OK)
+  def get_profile(current_manager: Manager = Depends(get_current_manager), ...):
+      return {
+          "data": {
+              "id": current_manager.id,
+              "email": current_manager.email,
+              "name": current_manager.name,
+              "timezone": current_manager.timezone,
+              "is_suspended": current_manager.is_suspended,
+              "email_verified_at": current_manager.email_verified_at,
+              "created_at": current_manager.created_at
+          }
+      }
+
+  After (Using Pydantic Serializer)
+
+  @router.get("/me", response_model=dict, status_code=status.HTTP_200_OK)
+  def get_profile(current_manager: Manager = Depends(get_current_manager), ...):
+      profile = ManagerProfileResponse.model_validate(current_manager)
+      return {
+          "data": profile.model_dump()
+      }
+
+  Benefits
+
+  1. DRY Principle - No need to manually list all fields
+  2. Type Safety - Pydantic validates and serializes according to schema
+  3. Maintainability - If schema changes, endpoints update automatically
+  4. Consistency - Same serialization logic used everywhere
+  5. Cleaner Code - 3 lines instead of 10
+
+  Test Results
+
+  ✅ All 66 tests passed (including 21 manager endpoint tests)
+  ✅ 100% coverage on managers.py endpoint
+  ✅ 95% overall code coverage
+
+  Both get_profile and update_profile endpoints now use the same elegant serialization pattern!
+
+✻ Churned for 45s
