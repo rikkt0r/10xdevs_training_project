@@ -4,11 +4,10 @@ FastAPI application entry point for Simple Issue Tracker.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
 import logging
 
 from app.core.config import settings
-from app.api.endpoints import auth
+from app.api.endpoints import auth, health
 # from app.api.endpoints import boards, tickets, inboxes, managers, public
 
 # Configure logging
@@ -36,18 +35,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Health check endpoint (no rate limiting)
-@app.get("/health")
-async def health_check():
-    """Health check endpoint."""
-    return JSONResponse(
-        content={
-            "status": "healthy",
-            "timestamp": "2026-01-17T12:00:00Z"
-        }
-    )
-
 # Include API routers
+app.include_router(health.router, tags=["Health"])
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 # app.include_router(managers.router, prefix="/api", tags=["Managers"])
 # app.include_router(inboxes.router, prefix="/api/inboxes", tags=["Email Inboxes"])
