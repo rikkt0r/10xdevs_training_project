@@ -200,6 +200,23 @@ def suspended_manager(test_db):
 
 
 @pytest.fixture
+def other_manager(test_db):
+    """Create another verified manager for testing ownership checks."""
+    manager = Manager(
+        email="other@example.com",
+        password_hash=hash_password("password123"),
+        name="Other Manager",
+        timezone="UTC",
+        email_verified_at=datetime.utcnow(),
+        is_suspended=False
+    )
+    test_db.add(manager)
+    test_db.commit()
+    test_db.refresh(manager)
+    return manager
+
+
+@pytest.fixture
 def auth_token(verified_manager):
     """Create a valid JWT token for the verified manager."""
     return create_access_token(
