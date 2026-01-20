@@ -74,6 +74,11 @@ Description available in docs/PRD.md
 
 ### Guidelines for PYTHON
 
+
+#### PYTHON
+
+- use `datetime.now(timezone.utc)` instead of **deprecated** `datetime.utcnow()`
+
 #### PROJECT_STRUCTURE
 
 - The virtualenv is located at `<project-root>/backend/venv`
@@ -95,14 +100,17 @@ Description available in docs/PRD.md
 
 #### FASTAPI_SERIALIZATION
 
-**Prefer Pydantic serialization over manual dictionary construction:**
+**Prefer Pydantic serialization over manual dictionary construction. Use prepared pydantic generics: MessageResponse, DataResponse, PaginatedDataResponse**
 
-Good (using Pydantic serialization):
+Examples:
+
+Good (using Pydantic generic serialization):
 ```python
-@router.get("/me")
-def get_profile(current_manager: Manager = Depends(get_current_manager)):
-    profile = ManagerProfileResponse.model_validate(current_manager)
-    return {"data": profile.model_dump()}
+@router.get("/me", status_code=status.HTTP_200_OK)
+def get_profile(
+    current_manager: Manager = Depends(get_current_manager)
+) -> DataResponse[ManagerProfileResponse]:
+    return DataResponse[ManagerProfileResponse](data=current_manager)
 ```
 
 Bad (manual dictionary construction):
@@ -183,4 +191,3 @@ Benefits:
 - Use fixtures for test setup and dependency injection
 - Implement parameterized tests for testing multiple inputs for {{function_types}}
 - Use monkeypatch for mocking dependencies
-

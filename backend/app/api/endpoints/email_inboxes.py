@@ -3,9 +3,11 @@ Email inbox endpoints for managing IMAP/SMTP configurations.
 """
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
-from typing import List
 
+from app.api.dependencies import get_current_manager
+from app.api.responses import DataResponse
 from app.core.database import get_db
+from app.models.manager import Manager
 from app.schemas.email_inbox import (
     CreateEmailInboxRequest,
     UpdateEmailInboxRequest,
@@ -14,36 +16,31 @@ from app.schemas.email_inbox import (
     TestConnectionResponse
 )
 from app.services.email_inbox_service import email_inbox_service
-from app.api.dependencies import get_current_manager
-from app.models.manager import Manager
 
 router = APIRouter()
 
 
-@router.get("", response_model=dict, status_code=status.HTTP_200_OK)
+@router.get("", status_code=status.HTTP_200_OK)
 def list_inboxes(
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
-):
+) -> DataResponse[list[EmailInboxResponse]]:
     """
     List all email inboxes for the authenticated manager.
 
     Returns a list of configured email inboxes (passwords excluded).
     """
     inboxes = email_inbox_service.get_inboxes(db, current_manager)
-    inbox_responses = [EmailInboxResponse.model_validate(inbox) for inbox in inboxes]
 
-    return {
-        "data": [inbox.model_dump() for inbox in inbox_responses]
-    }
+    return DataResponse[list[EmailInboxResponse]](data=inboxes)
 
 
-@router.post("", response_model=dict, status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 def create_inbox(
     request: CreateEmailInboxRequest,
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
-):
+) -> DataResponse[EmailInboxResponse]:
     """
     Create a new email inbox configuration.
 
@@ -72,19 +69,15 @@ def create_inbox(
         from_address=request.from_address,
         polling_interval=request.polling_interval
     )
-
-    inbox_response = EmailInboxResponse.model_validate(inbox)
-    return {
-        "data": inbox_response.model_dump()
-    }
+    return DataResponse[EmailInboxResponse](data=inbox)
 
 
-@router.get("/{inbox_id}", response_model=dict, status_code=status.HTTP_200_OK)
+@router.get("/{inbox_id}", status_code=status.HTTP_200_OK)
 def get_inbox(
     inbox_id: int,
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
-):
+) -> DataResponse[EmailInboxResponse]:
     """
     Get details for a specific email inbox.
 
@@ -93,20 +86,17 @@ def get_inbox(
     Returns 403 if inbox belongs to another manager.
     """
     inbox = email_inbox_service.get_inbox(db, current_manager, inbox_id)
-    inbox_response = EmailInboxResponse.model_validate(inbox)
 
-    return {
-        "data": inbox_response.model_dump()
-    }
+    return DataResponse[EmailInboxResponse](data=inbox)
 
 
-@router.put("/{inbox_id}", response_model=dict, status_code=status.HTTP_200_OK)
+@router.put("/{inbox_id}", status_code=status.HTTP_200_OK)
 def update_inbox(
     inbox_id: int,
     request: UpdateEmailInboxRequest,
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
-):
+) -> DataResponse[EmailInboxResponse]:
     """
     Update email inbox configuration.
 
@@ -121,11 +111,8 @@ def update_inbox(
         inbox_id=inbox_id,
         **update_data
     )
-
-    inbox_response = EmailInboxResponse.model_validate(inbox)
-    return {
-        "data": inbox_response.model_dump()
-    }
+    
+    return DataResponse[EmailInboxResponse](data=inbox)
 
 
 @router.delete("/{inbox_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -144,11 +131,11 @@ def delete_inbox(
     return None
 
 
-@router.post("/test", response_model=dict, status_code=status.HTTP_200_OK)
+@router.post("/test", status_code=status.HTTP_200_OK)
 def test_connection(
     request: TestConnectionRequest,
     current_manager: Manager = Depends(get_current_manager)
-):
+) -> DataResponse[TestConnectionResponse]:
     """
     Test email connection with provided credentials.
 
@@ -171,19 +158,15 @@ def test_connection(
         smtp_password=request.smtp_password,
         smtp_use_tls=request.smtp_use_tls
     )
-
-    response = TestConnectionResponse(**result)
-    return {
-        "data": response.model_dump()
-    }
+    return DataResponse[TestConnectionResponse](data=result)
 
 
-@router.post("/{inbox_id}/test", response_model=dict, status_code=status.HTTP_200_OK)
+@router.post("/{inbox_id}/test", status_code=status.HTTP_200_OK)
 def test_inbox_connection(
     inbox_id: int,
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
-):
+) -> DataResponse[TestConnectionResponse]:
     """
     Test connection for an existing inbox.
 
@@ -197,8 +180,4 @@ def test_inbox_connection(
         manager=current_manager,
         inbox_id=inbox_id
     )
-
-    response = TestConnectionResponse(**result)
-    return {
-        "data": response.model_dump()
-    }
+    return DataResponse[TestConnectionResponse](data=result)

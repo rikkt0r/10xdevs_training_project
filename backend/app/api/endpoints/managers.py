@@ -4,6 +4,7 @@ Manager profile endpoints for viewing and updating profile information.
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
+from app.api.responses import DataResponse
 from app.core.database import get_db
 from app.schemas.manager import (
     ManagerProfileResponse,
@@ -19,11 +20,11 @@ from app.models.manager import Manager
 router = APIRouter()
 
 
-@router.get("/me", response_model=dict, status_code=status.HTTP_200_OK)
+@router.get("/me", status_code=status.HTTP_200_OK)
 def get_profile(
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
-):
+) -> DataResponse[ManagerProfileResponse]:
     """
     Get current manager profile.
 
@@ -32,18 +33,15 @@ def get_profile(
     - Account status (suspended, email verified)
     - Creation timestamp
     """
-    profile = ManagerProfileResponse.model_validate(current_manager)
-    return {
-        "data": profile.model_dump()
-    }
+    return DataResponse[ManagerProfileResponse](data=current_manager)
 
 
-@router.patch("/me", response_model=dict, status_code=status.HTTP_200_OK)
+@router.patch("/me", status_code=status.HTTP_200_OK)
 def update_profile(
     request: UpdateProfileRequest,
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
-):
+) -> DataResponse[ManagerProfileResponse]:
     """
     Update manager profile.
 
@@ -60,19 +58,15 @@ def update_profile(
         name=request.name,
         timezone=request.timezone
     )
-
-    profile = ManagerProfileResponse.model_validate(updated_manager)
-    return {
-        "data": profile.model_dump()
-    }
+    return DataResponse[ManagerProfileResponse](data=updated_manager)
 
 
-@router.put("/me/password", response_model=dict, status_code=status.HTTP_200_OK)
+@router.put("/me/password", status_code=status.HTTP_200_OK)
 def change_password(
     request: ChangePasswordRequest,
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
-):
+) -> MessageResponse:
     """
     Change manager password.
 
@@ -88,18 +82,15 @@ def change_password(
         current_password=request.current_password,
         new_password=request.new_password
     )
-
-    return {
-        "message": "Password changed successfully"
-    }
+    return MessageResponse(message="Password changed successfully")
 
 
-@router.post("/me/suspend", response_model=dict, status_code=status.HTTP_200_OK)
+@router.post("/me/suspend", status_code=status.HTTP_200_OK)
 def suspend_account(
     request: SuspendAccountRequest,
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
-):
+) -> MessageResponse:
     """
     Suspend own manager account.
 
@@ -121,7 +112,4 @@ def suspend_account(
         suspension_message=request.suspension_message,
         password=request.password
     )
-
-    return {
-        "message": "Account suspended successfully"
-    }
+    return MessageResponse(message="Account suspended successfully")

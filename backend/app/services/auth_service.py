@@ -2,7 +2,7 @@
 Authentication service for business logic.
 """
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
@@ -125,7 +125,7 @@ class AuthService:
             )
 
         # Mark token as used
-        manager_token.used_at = datetime.utcnow()
+        manager_token.used_at = datetime.now(timezone.utc)
 
         # Mark email as verified
         manager = db.query(Manager).filter(Manager.id == manager_token.manager_id).first()

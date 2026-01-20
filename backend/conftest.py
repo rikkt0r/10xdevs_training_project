@@ -3,7 +3,7 @@ Pytest configuration and fixtures.
 """
 import os
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest.mock import AsyncMock, patch, MagicMock
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
@@ -155,7 +155,7 @@ def verified_manager(test_db):
         password_hash=hash_password("password123"),
         name="Verified Manager",
         timezone="UTC",
-        email_verified_at=datetime.utcnow(),
+        email_verified_at=datetime.now(timezone.utc),
         is_suspended=False
     )
     test_db.add(manager)
@@ -189,7 +189,7 @@ def suspended_manager(test_db):
         password_hash=hash_password("password123"),
         name="Suspended Manager",
         timezone="UTC",
-        email_verified_at=datetime.utcnow(),
+        email_verified_at=datetime.now(timezone.utc),
         is_suspended=True,
         suspension_message="Account suspended for testing"
     )
@@ -207,7 +207,7 @@ def other_manager(test_db):
         password_hash=hash_password("password123"),
         name="Other Manager",
         timezone="UTC",
-        email_verified_at=datetime.utcnow(),
+        email_verified_at=datetime.now(timezone.utc),
         is_suspended=False
     )
     test_db.add(manager)
@@ -242,7 +242,7 @@ def verification_token(test_db, unverified_manager):
         manager_id=unverified_manager.id,
         token_hash=token_hash,
         token_type="email_verification",
-        expires_at=datetime.utcnow() + timedelta(hours=24)
+        expires_at=datetime.now(timezone.utc) + timedelta(hours=24)
     )
     test_db.add(manager_token)
     test_db.commit()
@@ -261,7 +261,7 @@ def expired_verification_token(test_db, unverified_manager):
         manager_id=unverified_manager.id,
         token_hash=token_hash,
         token_type="email_verification",
-        expires_at=datetime.utcnow() - timedelta(hours=1)  # Expired
+        expires_at=datetime.now(timezone.utc) - timedelta(hours=1)  # Expired
     )
     test_db.add(manager_token)
     test_db.commit()
@@ -280,7 +280,7 @@ def password_reset_token(test_db, verified_manager):
         manager_id=verified_manager.id,
         token_hash=token_hash,
         token_type="password_reset",
-        expires_at=datetime.utcnow() + timedelta(hours=1)
+        expires_at=datetime.now(timezone.utc) + timedelta(hours=1)
     )
     test_db.add(manager_token)
     test_db.commit()
@@ -299,7 +299,7 @@ def expired_password_reset_token(test_db, verified_manager):
         manager_id=verified_manager.id,
         token_hash=token_hash,
         token_type="password_reset",
-        expires_at=datetime.utcnow() - timedelta(hours=1)  # Expired
+        expires_at=datetime.now(timezone.utc) - timedelta(hours=1)  # Expired
     )
     test_db.add(manager_token)
     test_db.commit()

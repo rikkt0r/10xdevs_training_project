@@ -4,7 +4,7 @@ Manager service for profile management business logic.
 from typing import Optional
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-from datetime import datetime
+from datetime import datetime, timezone as tz
 
 from app.models.manager import Manager
 from app.core.security import hash_password, verify_password
@@ -59,7 +59,7 @@ class ManagerService:
         if timezone is not None:
             manager.timezone = timezone
 
-        manager.updated_at = datetime.utcnow()
+        manager.updated_at = datetime.now(tz.utc)
         db.commit()
         db.refresh(manager)
 
@@ -93,7 +93,7 @@ class ManagerService:
 
         # Update password
         manager.password_hash = hash_password(new_password)
-        manager.updated_at = datetime.utcnow()
+        manager.updated_at = datetime.now(tz.utc)
         db.commit()
 
     def suspend_account(
@@ -132,7 +132,7 @@ class ManagerService:
         # Suspend account
         manager.is_suspended = True
         manager.suspension_message = suspension_message
-        manager.updated_at = datetime.utcnow()
+        manager.updated_at = datetime.now(tz.utc)
         db.commit()
 
 

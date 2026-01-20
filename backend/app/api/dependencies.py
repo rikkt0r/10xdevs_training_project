@@ -61,7 +61,7 @@ def get_current_manager(
         )
 
     # Get manager from database
-    manager = db.query(Manager).filter(Manager.id == manager_id).first()
+    manager: Manager|None = db.query(Manager).filter(Manager.id == manager_id).first()
     if not manager:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
