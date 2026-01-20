@@ -1,14 +1,16 @@
 """
 FastAPI application entry point for Simple Issue Tracker.
 """
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 import logging
 
 from app.core.config import settings
-from app.api.endpoints import auth, health, managers, email_inboxes, boards, tickets, standby_queue
-# from app.api.endpoints import public
+from app.core.middleware import limiter, SecurityHeadersMiddleware
+from app.api.endpoints import auth, health, managers, email_inboxes, boards, tickets, standby_queue, dashboard, public
 
 # Configure logging
 logging.basicConfig(
@@ -26,6 +28,10 @@ app = FastAPI(
     redoc_url="/api/redoc" if settings.DEBUG else None,
 )
 
+# Add rate limiter state
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
@@ -35,6 +41,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Add security headers middleware
+app.add_middleware(SecurityHeadersMiddleware)
+
 # Include API routers
 app.include_router(health.router, tags=["Health"])
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
@@ -43,7 +52,8 @@ app.include_router(email_inboxes.router, prefix="/api/inboxes", tags=["Email Inb
 app.include_router(boards.router, prefix="/api/boards", tags=["Boards"])
 app.include_router(tickets.router, prefix="/api/tickets", tags=["Tickets"])
 app.include_router(standby_queue.router, prefix="/api/standby-queue", tags=["Standby Queue"])
-# app.include_router(public.router, prefix="/api/public", tags=["Public"])
+app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
+app.include_router(public.router, prefix="/api/public", tags=["Public"])
 
 # Serve frontend static files (production only)
 # app.mount("/", StaticFiles(directory="frontend/build", html=True), name="frontend")

@@ -2,13 +2,14 @@
 Authentication endpoints for manager registration, login, and password management.
 """
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 
 from app.api.responses import DataResponse, MessageResponse, DataWithMessageResponse
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.config import settings
+from app.core.middleware import limiter
 from app.schemas.auth import (
     RegisterRequest,
     RegisterResponse,
@@ -30,8 +31,10 @@ router = APIRouter()
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
+@limiter.limit(f"{settings.RATE_LIMIT_AUTH_PER_MINUTE}/minute")
 async def register(
-    request: RegisterRequest,
+    request: Request,
+    body: RegisterRequest,
     db: Session = Depends(get_db)
 ) -> DataWithMessageResponse[RegisterResponse]:
     """
@@ -46,9 +49,9 @@ async def register(
     # Create manager
     manager = auth_service.create_manager(
         db=db,
-        email=request.email,
-        password=request.password,
-        name=request.name
+        email=body.email,
+        password=body.password,
+        name=body.name
     )
 
     # Create verification token
@@ -64,8 +67,10 @@ async def register(
 
 
 @router.post("/login", status_code=status.HTTP_200_OK)
-def login(
-    request: LoginRequest,
+@limiter.limit(f"{settings.RATE_LIMIT_AUTH_PER_MINUTE}/minute")
+async def login(
+    request: Request,
+    body: LoginRequest,
     db: Session = Depends(get_db)
 ) -> DataResponse[LoginResponse]:
     """
@@ -79,8 +84,8 @@ def login(
     # Authenticate manager
     manager = auth_service.authenticate_manager(
         db=db,
-        email=request.email,
-        password=request.password
+        email=body.email,
+        password=body.password
     )
 
     if not manager:
