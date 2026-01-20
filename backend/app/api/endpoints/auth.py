@@ -5,7 +5,7 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.api.responses import DataResponse, MessageResponse
+from app.api.responses import DataResponse, MessageResponse, DataWithMessageResponse
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.config import settings
@@ -33,7 +33,7 @@ router = APIRouter()
 async def register(
     request: RegisterRequest,
     db: Session = Depends(get_db)
-) -> DataResponse[RegisterResponse]:
+) -> DataWithMessageResponse[RegisterResponse]:
     """
     Register a new manager account.
 
@@ -57,7 +57,10 @@ async def register(
     # Send verification email
     await email_service.send_verification_email(manager.email, verification_token)
 
-    return DataResponse[RegisterResponse](data=manager)
+    return DataWithMessageResponse[RegisterResponse](
+        data=manager,
+        message="Verification email sent"
+    )
 
 
 @router.post("/login", status_code=status.HTTP_200_OK)

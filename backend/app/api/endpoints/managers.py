@@ -4,7 +4,7 @@ Manager profile endpoints for viewing and updating profile information.
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-from app.api.responses import DataResponse
+from app.api.responses import DataResponse, MessageResponse
 from app.core.database import get_db
 from app.schemas.manager import (
     ManagerProfileResponse,
@@ -12,7 +12,7 @@ from app.schemas.manager import (
     ChangePasswordRequest,
     SuspendAccountRequest
 )
-from app.schemas.auth import MessageResponse
+
 from app.services.manager_service import manager_service
 from app.api.dependencies import get_current_manager
 from app.models.manager import Manager

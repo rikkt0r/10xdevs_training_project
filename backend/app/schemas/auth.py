@@ -1,7 +1,7 @@
 """
 Pydantic schemas for authentication endpoints.
 """
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, computed_field
 from typing import Optional
 from datetime import datetime
 
@@ -19,8 +19,14 @@ class RegisterResponse(BaseModel):
     id: int
     email: str
     name: str
-    email_verified: bool
+    email_verified_at: Optional[datetime] = Field(exclude=True)
     created_at: datetime
+
+    @computed_field
+    @property
+    def email_verified(self) -> bool:
+        """Compute email_verified from email_verified_at timestamp."""
+        return self.email_verified_at is not None
 
     class Config:
         from_attributes = True

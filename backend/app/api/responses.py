@@ -19,3 +19,8 @@ class PaginationSerializer(BaseModel):
 class PaginatedDataResponse[DataType](BaseModel):
     data: DataType
     pagination: PaginationSerializer
+
+
+class DataWithMessageResponse[DataType](BaseModel):
+    data: DataType
+    message: str

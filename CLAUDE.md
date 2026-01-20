@@ -142,6 +142,56 @@ def verify_email(
     return MessageResponse(message="Email verified successfully")
 ```
 
+4. **Response with nested data** - pass dict, let Pydantic convert:
+```python
+@router.get("/{board_id}", status_code=status.HTTP_200_OK)
+def get_board(
+    board_id: int,
+    current_manager: Manager = Depends(get_current_manager),
+    db: Session = Depends(get_db)
+) -> DataResponse[BoardWithTicketCountsResponse]:
+    board, ticket_counts = board_service.get_board(db, current_manager, board_id)
+
+    # Build dict - Pydantic will handle conversion to BoardWithTicketCountsResponse
+    board_dict = {
+        'id': board.id,
+        'name': board.name,
+        'ticket_counts': ticket_counts,  # Dict will be converted to TicketCounts
+        'created_at': board.created_at
+    }
+
+    return DataResponse[BoardWithTicketCountsResponse](data=board_dict)
+```
+
+**CRITICAL: Avoid double conversion - Pydantic handles it automatically**
+
+❌ **Bad (unnecessary double conversion):**
+```python
+# Don't manually instantiate the response schema!
+board_dict = {
+    'id': board.id,
+    'ticket_counts': TicketCounts(**ticket_counts),  # ❌ Unnecessary
+}
+response = BoardWithTicketCountsResponse(**board_dict)  # ❌ Unnecessary
+return DataResponse[BoardWithTicketCountsResponse](data=response)  # ❌ Double conversion
+```
+
+✅ **Good (let Pydantic convert):**
+```python
+# Just pass the dict - Pydantic converts it automatically
+board_dict = {
+    'id': board.id,
+    'ticket_counts': ticket_counts,  # ✅ Pass dict directly
+}
+return DataResponse[BoardWithTicketCountsResponse](data=board_dict)  # ✅ Single conversion
+```
+
+**Key principle:** When using `DataResponse[T]`, pass raw data (dict or ORM model). Pydantic automatically:
+- Validates the data against schema T
+- Converts dicts to Pydantic models
+- Converts ORM models to Pydantic models (via `from_attributes = True`)
+- Converts nested dicts to nested Pydantic models
+
 **Bad (manual dictionary construction):**
 ```python
 @router.get("/me")
