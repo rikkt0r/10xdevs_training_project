@@ -100,11 +100,18 @@ Description available in docs/PRD.md
 
 #### FASTAPI_SERIALIZATION
 
-**Prefer Pydantic serialization over manual dictionary construction. Use prepared pydantic generics: MessageResponse, DataResponse, PaginatedDataResponse**
+**Always use Pydantic generic response wrappers instead of manual dictionary construction.**
 
-Examples:
+Available generics (defined in `app/api/responses.py`):
+- `DataResponse[T]` - wraps data responses as `{"data": T}`
+- `MessageResponse` - simple message responses as `{"message": "..."}`
+- `PaginatedDataResponse[T]` - wraps paginated data with metadata as `{"data": T, "pagination": {...}}`
 
-Good (using Pydantic generic serialization):
+These use Python 3.12+ PEP 695 type parameter syntax (`class DataResponse[DataType](BaseModel)`).
+
+**Key patterns:**
+
+1. **Single object response** - pass ORM model or Pydantic model directly:
 ```python
 @router.get("/me", status_code=status.HTTP_200_OK)
 def get_profile(
@@ -113,7 +120,29 @@ def get_profile(
     return DataResponse[ManagerProfileResponse](data=current_manager)
 ```
 
-Bad (manual dictionary construction):
+2. **List response** - use generic with list type:
+```python
+@router.get("", status_code=status.HTTP_200_OK)
+def list_inboxes(
+    current_manager: Manager = Depends(get_current_manager),
+    db: Session = Depends(get_db)
+) -> DataResponse[list[EmailInboxResponse]]:
+    inboxes = email_inbox_service.get_inboxes(db, current_manager)
+    return DataResponse[list[EmailInboxResponse]](data=inboxes)
+```
+
+3. **Message-only response**:
+```python
+@router.post("/verify-email", status_code=status.HTTP_200_OK)
+def verify_email(
+    request: VerifyEmailRequest,
+    db: Session = Depends(get_db)
+) -> MessageResponse:
+    auth_service.verify_email_token(db, request.token)
+    return MessageResponse(message="Email verified successfully")
+```
+
+**Bad (manual dictionary construction):**
 ```python
 @router.get("/me")
 def get_profile(current_manager: Manager = Depends(get_current_manager)):
@@ -127,11 +156,12 @@ def get_profile(current_manager: Manager = Depends(get_current_manager)):
     }
 ```
 
-Benefits:
-- DRY principle - no field duplication
-- Type safety - Pydantic validates schema
-- Maintainability - schema changes propagate automatically
-- Consistency - same serialization logic everywhere
+**Benefits:**
+- **DRY principle** - no field duplication between ORM models and response dicts
+- **Type safety** - both runtime (Pydantic validation) and development time (type hints)
+- **Maintainability** - schema changes propagate automatically
+- **Consistency** - standardized response structure across all endpoints
+- **OpenAPI integration** - FastAPI generates correct schemas automatically
 
 ## DATABASE
 

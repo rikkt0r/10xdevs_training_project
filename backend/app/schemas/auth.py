@@ -88,9 +88,3 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     expires_in: int
-
-
-# Generic message response
-class MessageResponse(BaseModel):
-    """Generic message response."""
-    message: str

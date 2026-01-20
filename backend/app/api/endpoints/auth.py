@@ -5,6 +5,7 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.api.responses import DataResponse, MessageResponse
 from app.core.database import get_db
 from app.core.security import create_access_token
 from app.core.config import settings
@@ -17,7 +18,6 @@ from app.schemas.auth import (
     ResendVerificationRequest,
     ForgotPasswordRequest,
     ResetPasswordRequest,
-    MessageResponse,
     ManagerInfo,
     TokenResponse
 )
@@ -29,11 +29,11 @@ from app.models.manager import Manager
 router = APIRouter()
 
 
-@router.post("/register", response_model=dict, status_code=status.HTTP_201_CREATED)
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(
     request: RegisterRequest,
     db: Session = Depends(get_db)
-):
+) -> DataResponse[RegisterResponse]:
     """
     Register a new manager account.
 
@@ -57,25 +57,14 @@ async def register(
     # Send verification email
     await email_service.send_verification_email(manager.email, verification_token)
 
-    # Prepare response
-    response_data = RegisterResponse(
-        id=manager.id,
-        email=manager.email,
-        name=manager.name,
-        email_verified=manager.email_verified_at is not None,
-        created_at=manager.created_at
-    )
-    return {
-        "data": response_data.model_dump(),
-        "message": "Verification email sent"
-    }
+    return DataResponse[RegisterResponse](data=manager)
 
 
-@router.post("/login", response_model=dict, status_code=status.HTTP_200_OK)
+@router.post("/login", status_code=status.HTTP_200_OK)
 def login(
     request: LoginRequest,
     db: Session = Depends(get_db)
-):
+) -> DataResponse[LoginResponse]:
     """
     Authenticate and receive JWT token.
 
@@ -118,22 +107,20 @@ def login(
     )
 
     # Prepare response
-    manager_info = ManagerInfo.model_validate(manager)
     response_data = LoginResponse(
         access_token=access_token,
         token_type="bearer",
         expires_in=settings.JWT_EXPIRY_HOURS * 3600,
-        manager=manager_info
+        manager=ManagerInfo.model_validate(manager)
     )
-    return {
-        "data": response_data.model_dump()
-    }
+
+    return DataResponse[LoginResponse](data=response_data)
 
 
-@router.post("/logout", response_model=MessageResponse, status_code=status.HTTP_200_OK)
+@router.post("/logout", status_code=status.HTTP_200_OK)
 def logout(
     current_manager: Manager = Depends(get_current_manager)
-):
+) -> MessageResponse:
     """
     Invalidate current token (client-side token removal).
 
@@ -143,11 +130,11 @@ def logout(
     return MessageResponse(message="Logged out successfully")
 
 
-@router.post("/verify-email", response_model=MessageResponse, status_code=status.HTTP_200_OK)
+@router.post("/verify-email", status_code=status.HTTP_200_OK)
 def verify_email(
     request: VerifyEmailRequest,
     db: Session = Depends(get_db)
-):
+) -> MessageResponse:
     """
     Verify email with token from verification email.
 
@@ -161,11 +148,11 @@ def verify_email(
     return MessageResponse(message="Email verified successfully")
 
 
-@router.post("/resend-verification", response_model=MessageResponse, status_code=status.HTTP_200_OK)
+@router.post("/resend-verification", status_code=status.HTTP_200_OK)
 async def resend_verification(
     request: ResendVerificationRequest,
     db: Session = Depends(get_db)
-):
+) -> MessageResponse:
     """
     Resend verification email.
 
@@ -193,11 +180,11 @@ async def resend_verification(
     return MessageResponse(message="If the email exists, a verification link has been sent")
 
 
-@router.post("/forgot-password", response_model=MessageResponse, status_code=status.HTTP_200_OK)
+@router.post("/forgot-password", status_code=status.HTTP_200_OK)
 async def forgot_password(
     request: ForgotPasswordRequest,
     db: Session = Depends(get_db)
-):
+) -> MessageResponse:
     """
     Request password reset email.
 
@@ -219,11 +206,11 @@ async def forgot_password(
     return MessageResponse(message="If the email exists, a reset link has been sent")
 
 
-@router.post("/reset-password", response_model=MessageResponse, status_code=status.HTTP_200_OK)
+@router.post("/reset-password", status_code=status.HTTP_200_OK)
 def reset_password(
     request: ResetPasswordRequest,
     db: Session = Depends(get_db)
-):
+) -> MessageResponse:
     """
     Reset password with token from reset email.
 
@@ -242,10 +229,10 @@ def reset_password(
     return MessageResponse(message="Password reset successfully")
 
 
-@router.post("/refresh", response_model=dict, status_code=status.HTTP_200_OK)
+@router.post("/refresh", status_code=status.HTTP_200_OK)
 def refresh_token(
     current_manager: Manager = Depends(get_current_manager)
-):
+) -> DataResponse[TokenResponse]:
     """
     Refresh JWT token.
 
@@ -263,6 +250,5 @@ def refresh_token(
         token_type="bearer",
         expires_in=settings.JWT_EXPIRY_HOURS * 3600
     )
-    return {
-        "data": response_data.model_dump()
-    }
+
+    return DataResponse[TokenResponse](data=response_data)
