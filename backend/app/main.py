@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 import logging
 
 from app.core.config import settings
-from app.api.endpoints import auth, health, managers, email_inboxes, boards, tickets
+from app.api.endpoints import auth, health, managers, email_inboxes, boards, tickets, standby_queue
 # from app.api.endpoints import public
 
 # Configure logging
@@ -42,6 +42,7 @@ app.include_router(managers.router, prefix="/api", tags=["Managers"])
 app.include_router(email_inboxes.router, prefix="/api/inboxes", tags=["Email Inboxes"])
 app.include_router(boards.router, prefix="/api/boards", tags=["Boards"])
 app.include_router(tickets.router, prefix="/api/tickets", tags=["Tickets"])
+app.include_router(standby_queue.router, prefix="/api/standby-queue", tags=["Standby Queue"])
 # app.include_router(public.router, prefix="/api/public", tags=["Public"])
 
 # Serve frontend static files (production only)
