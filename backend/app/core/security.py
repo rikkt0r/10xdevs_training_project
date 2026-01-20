@@ -1,7 +1,7 @@
 """
 Security utilities for authentication and encryption.
 """
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional
 from passlib.context import CryptContext
 from jose import JWTError, jwt
@@ -43,9 +43,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
         to_encode["sub"] = str(to_encode["sub"])
 
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(hours=settings.JWT_EXPIRY_HOURS)
+        expire = datetime.now(timezone.utc) + timedelta(hours=settings.JWT_EXPIRY_HOURS)
 
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(

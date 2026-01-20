@@ -81,7 +81,7 @@ class AuthService:
             manager_id=manager.id,
             token_hash=token_hash,
             token_type="email_verification",
-            expires_at=datetime.utcnow() + timedelta(hours=24)
+            expires_at=datetime.now(timezone.utc) + timedelta(hours=24)
         )
         db.add(manager_token)
         db.commit()
@@ -117,8 +117,8 @@ class AuthService:
                 detail="Invalid or already used token"
             )
 
-        # Check expiration
-        if manager_token.expires_at < datetime.utcnow():
+        # Check expiration (compare as naive datetimes since DB stores as naive)
+        if manager_token.expires_at < datetime.now(timezone.utc).replace(tzinfo=None):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Token has expired"
@@ -129,7 +129,7 @@ class AuthService:
 
         # Mark email as verified
         manager = db.query(Manager).filter(Manager.id == manager_token.manager_id).first()
-        manager.email_verified_at = datetime.utcnow()
+        manager.email_verified_at = datetime.now(timezone.utc)
 
         db.commit()
         db.refresh(manager)
@@ -178,14 +178,14 @@ class AuthService:
             ManagerToken.manager_id == manager.id,
             ManagerToken.token_type == "password_reset",
             ManagerToken.used_at.is_(None)
-        ).update({"used_at": datetime.utcnow()})
+        ).update({"used_at": datetime.now(timezone.utc)})
 
         # Store token in database
         manager_token = ManagerToken(
             manager_id=manager.id,
             token_hash=token_hash,
             token_type="password_reset",
-            expires_at=datetime.utcnow() + timedelta(hours=1)
+            expires_at=datetime.now(timezone.utc) + timedelta(hours=1)
         )
         db.add(manager_token)
         db.commit()
@@ -222,15 +222,15 @@ class AuthService:
                 detail="Invalid or already used token"
             )
 
-        # Check expiration
-        if manager_token.expires_at < datetime.utcnow():
+        # Check expiration (compare as naive datetimes since DB stores as naive)
+        if manager_token.expires_at < datetime.now(timezone.utc).replace(tzinfo=None):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Token has expired"
             )
 
         # Mark token as used
-        manager_token.used_at = datetime.utcnow()
+        manager_token.used_at = datetime.now(timezone.utc)
 
         # Update password
         manager = db.query(Manager).filter(Manager.id == manager_token.manager_id).first()

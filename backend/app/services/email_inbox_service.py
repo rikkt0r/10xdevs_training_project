@@ -4,7 +4,7 @@ Email inbox service for managing IMAP/SMTP configurations.
 from typing import List, Optional, Dict
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.models.email_inbox import EmailInbox
 from app.models.manager import Manager
@@ -150,7 +150,7 @@ class EmailInboxService:
             if value is not None and hasattr(inbox, key):
                 setattr(inbox, key, value)
 
-        inbox.updated_at = datetime.utcnow()
+        inbox.updated_at = datetime.now(timezone.utc)
         db.commit()
         db.refresh(inbox)
 
