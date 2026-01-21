@@ -1,7 +1,7 @@
 """
 Ticket endpoints for managing internal tickets.
 """
-from fastapi import APIRouter, Depends, status, Query
+from fastapi import APIRouter, Depends, status, Query, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import datetime
@@ -17,6 +17,7 @@ from app.schemas.ticket import (
     RecentTicketResponse
 )
 from app.services.ticket_service import ticket_service
+from app.services.email_service import email_service
 
 router = APIRouter()
 
@@ -95,6 +96,7 @@ def get_ticket(
 def change_ticket_state(
     ticket_id: int,
     request: ChangeTicketStateRequest,
+    background_tasks: BackgroundTasks,
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
 ) -> DataResponse[TicketResponse]:
@@ -108,7 +110,12 @@ def change_ticket_state(
     Manager can add an optional comment that will be sent to the ticket creator.
     Returns 422 if state transition is invalid.
     """
-    ticket = ticket_service.change_ticket_state(
+    # Store previous state before change
+    ticket = ticket_service.get_ticket(db, current_manager, ticket_id)
+    previous_state = ticket.state
+
+    # Perform state change
+    updated_ticket = ticket_service.change_ticket_state(
         db=db,
         manager=current_manager,
         ticket_id=ticket_id,
@@ -116,4 +123,30 @@ def change_ticket_state(
         comment=request.comment
     )
 
-    return DataResponse[TicketResponse](data=ticket)
+    # Get from_email from manager's inbox (prefer exclusive inbox, then first active inbox)
+    from_email = None
+    if updated_ticket.board.exclusive_inbox_id:
+        for inbox in current_manager.email_inboxes:
+            if inbox.id == updated_ticket.board.exclusive_inbox_id and inbox.is_active:
+                from_email = inbox.from_address
+                break
+    if not from_email and current_manager.email_inboxes:
+        for inbox in current_manager.email_inboxes:
+            if inbox.is_active:
+                from_email = inbox.from_address
+                break
+
+    # Send status change notification email in background
+    background_tasks.add_task(
+        email_service.send_status_change_notification,
+        to_email=updated_ticket.creator_email,
+        ticket_uuid=str(updated_ticket.uuid),
+        ticket_title=updated_ticket.title,
+        board_name=updated_ticket.board.name,
+        previous_state=previous_state,
+        new_state=request.state,
+        comment=request.comment,
+        from_email=from_email
+    )
+
+    return DataResponse[TicketResponse](data=updated_ticket)

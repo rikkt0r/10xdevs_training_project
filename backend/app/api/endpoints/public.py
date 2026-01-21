@@ -1,7 +1,7 @@
 """
 Public endpoints for unauthenticated ticket creation and viewing.
 """
-from fastapi import APIRouter, Depends, status, Request
+from fastapi import APIRouter, Depends, status, Request, BackgroundTasks
 from sqlalchemy.orm import Session
 
 from app.api.responses import DataResponse
@@ -16,6 +16,7 @@ from app.schemas.public import (
     PublicExternalTicketViewResponse
 )
 from app.services.public_service import public_service
+from app.services.email_service import email_service
 
 router = APIRouter()
 
@@ -46,6 +47,7 @@ async def create_ticket(
     request: Request,
     unique_name: str,
     body: CreatePublicTicketRequest,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ) -> DataResponse[CreatePublicTicketResponse]:
     """
@@ -66,7 +68,25 @@ async def create_ticket(
         description=body.description
     )
 
-    return DataResponse[CreatePublicTicketResponse](data=ticket_info)
+    # Send confirmation email in background
+    background_tasks.add_task(
+        email_service.send_ticket_confirmation_email,
+        to_email=ticket_info["creator_email"],
+        ticket_uuid=str(ticket_info["uuid"]),
+        ticket_title=ticket_info["title"],
+        ticket_description=ticket_info["description"],
+        board_name=ticket_info["board_name"],
+        from_email=ticket_info.get("from_email")
+    )
+
+    # Return only the fields expected by the response schema
+    response_data = {
+        "uuid": ticket_info["uuid"],
+        "title": ticket_info["title"],
+        "message": ticket_info["message"]
+    }
+
+    return DataResponse[CreatePublicTicketResponse](data=response_data)
 
 
 @router.get("/tickets/{ticket_uuid}", status_code=status.HTTP_200_OK)

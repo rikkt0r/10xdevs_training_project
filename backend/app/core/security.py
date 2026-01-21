@@ -2,14 +2,18 @@
 Security utilities for authentication and encryption.
 """
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from cryptography.fernet import Fernet
 import base64
 import hashlib
+import uuid
 
 from app.core.config import settings
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session
 
 # Password hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -112,11 +116,52 @@ def decrypt_data(encrypted_data: str) -> str:
 def hash_string(data: str) -> str:
     """
     Create SHA-256 hash of a string.
-    
+
     Args:
         data: String to hash
-        
+
     Returns:
         Hex string of hash
     """
     return hashlib.sha256(data.encode()).hexdigest()
+
+
+def generate_unique_ticket_uuid(db: "Session", max_attempts: int = 10) -> uuid.UUID:
+    """
+    Generate a UUID that is unique across both tickets and external_tickets tables.
+
+    Per spec: UUID must be unique across both Ticket and ExternalTicket tables.
+    Enforced at application level by checking both tables and retrying on collision.
+
+    Args:
+        db: Database session
+        max_attempts: Maximum attempts before raising an error (default 10)
+
+    Returns:
+        A UUID guaranteed to be unique across both ticket tables
+
+    Raises:
+        RuntimeError: If unable to generate unique UUID after max_attempts
+    """
+    # Import here to avoid circular imports
+    from app.models.ticket import Ticket
+    from app.models.external_ticket import ExternalTicket
+
+    for _ in range(max_attempts):
+        new_uuid = uuid.uuid4()
+
+        # Check if UUID exists in tickets table
+        ticket_exists = db.query(Ticket).filter(Ticket.uuid == new_uuid).first() is not None
+        if ticket_exists:
+            continue
+
+        # Check if UUID exists in external_tickets table
+        external_exists = db.query(ExternalTicket).filter(ExternalTicket.uuid == new_uuid).first() is not None
+        if external_exists:
+            continue
+
+        # UUID is unique across both tables
+        return new_uuid
+
+    # This should essentially never happen with UUID v4 (collision probability ~1 in 2^122)
+    raise RuntimeError(f"Failed to generate unique UUID after {max_attempts} attempts")

@@ -200,9 +200,6 @@ class TicketService:
         db.commit()
         db.refresh(ticket)
 
-        # TODO: Send email notification to ticket creator
-        # email_service.send_status_change_email(ticket, status_change)
-
         return ticket
 
     def get_recent_tickets(

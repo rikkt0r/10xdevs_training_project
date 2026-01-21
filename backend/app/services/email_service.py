@@ -1,13 +1,18 @@
 """
-Email service for sending authentication-related emails.
+Email service for sending authentication and notification emails.
 """
 import logging
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 import aiosmtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 from app.core.config import settings
+
+if TYPE_CHECKING:
+    from app.models.ticket import Ticket
+    from app.models.board import Board
+    from app.models.ticket_status_change import TicketStatusChange
 
 logger = logging.getLogger(__name__)
 
@@ -133,6 +138,127 @@ Best regards,
         """
 
         return await self.send_email(to_email, subject, body)
+
+    async def send_ticket_confirmation_email(
+        self,
+        to_email: str,
+        ticket_uuid: str,
+        ticket_title: str,
+        ticket_description: str,
+        board_name: str,
+        from_email: Optional[str] = None
+    ) -> bool:
+        """
+        Send ticket creation confirmation email.
+
+        Args:
+            to_email: Creator's email address
+            ticket_uuid: Ticket UUID for secret link
+            ticket_title: Ticket title
+            ticket_description: Ticket description
+            board_name: Name of the board
+            from_email: Sender email address (manager's inbox or default)
+
+        Returns:
+            True if email sent successfully
+        """
+        ticket_url = f"{settings.SERVER_HOST}:{settings.SERVER_PORT}/ticket/{ticket_uuid}"
+
+        # Truncate description if too long for email
+        desc_preview = ticket_description[:500] + "..." if len(ticket_description) > 500 else ticket_description
+
+        subject = f"Ticket Submitted: {ticket_title}"
+        body = f"""
+Hello,
+
+Your ticket has been successfully submitted to {board_name}.
+
+Ticket Details:
+---------------
+Title: {ticket_title}
+
+Description:
+{desc_preview}
+
+You can view your ticket status at any time using this link:
+{ticket_url}
+
+Please save this link - it's the only way to check your ticket status.
+
+Best regards,
+{board_name} Team
+        """
+
+        return await self.send_email(to_email, subject, body, from_email)
+
+    async def send_status_change_notification(
+        self,
+        to_email: str,
+        ticket_uuid: str,
+        ticket_title: str,
+        board_name: str,
+        previous_state: str,
+        new_state: str,
+        comment: Optional[str] = None,
+        from_email: Optional[str] = None
+    ) -> bool:
+        """
+        Send ticket status change notification email.
+
+        Args:
+            to_email: Creator's email address
+            ticket_uuid: Ticket UUID for secret link
+            ticket_title: Ticket title
+            board_name: Name of the board
+            previous_state: Previous ticket state
+            new_state: New ticket state
+            comment: Optional manager comment
+            from_email: Sender email address (manager's inbox or default)
+
+        Returns:
+            True if email sent successfully
+        """
+        ticket_url = f"{settings.SERVER_HOST}:{settings.SERVER_PORT}/ticket/{ticket_uuid}"
+
+        # Human-readable state names
+        state_names = {
+            "new": "New",
+            "in_progress": "In Progress",
+            "closed": "Closed",
+            "rejected": "Rejected"
+        }
+        readable_new_state = state_names.get(new_state, new_state)
+        readable_prev_state = state_names.get(previous_state, previous_state)
+
+        subject = f"Ticket Update: {ticket_title} - Now {readable_new_state}"
+
+        comment_section = ""
+        if comment:
+            comment_section = f"""
+Manager's Comment:
+{comment}
+"""
+
+        body = f"""
+Hello,
+
+The status of your ticket has been updated.
+
+Ticket: {ticket_title}
+Board: {board_name}
+
+Status Change:
+  From: {readable_prev_state}
+  To: {readable_new_state}
+{comment_section}
+You can view your ticket at:
+{ticket_url}
+
+Best regards,
+{board_name} Team
+        """
+
+        return await self.send_email(to_email, subject, body, from_email)
 
 
 # Singleton instance

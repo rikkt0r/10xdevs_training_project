@@ -12,6 +12,7 @@ from app.models.ticket import Ticket
 from app.models.board import Board
 from app.models.external_ticket import ExternalTicket
 from app.schemas.standby_queue import AssignedTicketInfo, RetryExternalInfo
+from app.core.security import generate_unique_ticket_uuid
 
 
 class StandbyQueueService:
@@ -120,8 +121,12 @@ class StandbyQueueService:
                 detail="Board not found"
             )
 
+        # Generate unique UUID across both tickets and external_tickets tables
+        unique_uuid = generate_unique_ticket_uuid(db)
+
         # Create ticket from queue item
         ticket = Ticket(
+            uuid=unique_uuid,
             board_id=board_id,
             title=item.email_subject,
             description=item.email_body,

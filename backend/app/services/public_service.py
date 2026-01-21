@@ -11,6 +11,7 @@ from app.models.board import Board
 from app.models.ticket import Ticket
 from app.models.external_ticket import ExternalTicket
 from app.models.manager import Manager
+from app.core.security import generate_unique_ticket_uuid
 
 
 class PublicService:
@@ -109,8 +110,12 @@ class PublicService:
                 detail="This board is no longer accepting new tickets"
             )
 
+        # Generate unique UUID across both tickets and external_tickets tables
+        unique_uuid = generate_unique_ticket_uuid(db)
+
         # Create ticket
         ticket = Ticket(
+            uuid=unique_uuid,
             board_id=board.id,
             title=title,
             description=description,
@@ -123,12 +128,26 @@ class PublicService:
         db.commit()
         db.refresh(ticket)
 
-        # TODO: Send confirmation email to creator
-        # email_service.send_ticket_confirmation_email(ticket, board)
+        # Determine from_email for confirmation (prefer exclusive inbox, then first active inbox)
+        from_email = None
+        if board.exclusive_inbox_id:
+            for inbox in board.manager.email_inboxes:
+                if inbox.id == board.exclusive_inbox_id and inbox.is_active:
+                    from_email = inbox.from_address
+                    break
+        if not from_email and board.manager.email_inboxes:
+            for inbox in board.manager.email_inboxes:
+                if inbox.is_active:
+                    from_email = inbox.from_address
+                    break
 
         return {
             "uuid": ticket.uuid,
             "title": ticket.title,
+            "description": ticket.description,
+            "board_name": board.name,
+            "creator_email": email,
+            "from_email": from_email,
             "message": "Your ticket has been submitted. A confirmation email has been sent."
         }
 
