@@ -75,18 +75,18 @@ def setup_dashboard_data(test_db, verified_manager, other_manager):
     test_db.commit()
 
     # Create tickets in various states
-    # Use a fixed reference time (Wednesday at 18:00 UTC) to avoid test flakiness
     now = datetime.now(timezone.utc)
     # Calculate today at 00:00 and yesterday
     today_start = datetime(now.year, now.month, now.day, tzinfo=timezone.utc)
 
-    # Tickets created today (use current time minus a few hours)
+    # Tickets created today - use absolute times within today to avoid flakiness
+    # when tests run early in the morning
     today_tickets = [
-        {"state": "new", "hours_ago": 2},
-        {"state": "new", "hours_ago": 4},
-        {"state": "in_progress", "hours_ago": 6},
-        {"state": "closed", "hours_ago": 8},
-        {"state": "rejected", "hours_ago": 10}
+        {"state": "new", "hour": 1},
+        {"state": "new", "hour": 2},
+        {"state": "in_progress", "hour": 3},
+        {"state": "closed", "hour": 4},
+        {"state": "rejected", "hour": 5}
     ]
 
     for ticket_data in today_tickets:
@@ -100,8 +100,8 @@ def setup_dashboard_data(test_db, verified_manager, other_manager):
         )
         test_db.add(ticket)
         test_db.flush()
-        # Set to today but earlier
-        ticket.created_at = now - timedelta(hours=ticket_data['hours_ago'])
+        # Set to a fixed hour today (guarantees it's today regardless of current time)
+        ticket.created_at = today_start + timedelta(hours=ticket_data['hour'])
 
     # Tickets created yesterday (guaranteed to be this week if today is Tue-Sun)
     # If today is Monday, these will be in previous week, so we'll adjust expectations
