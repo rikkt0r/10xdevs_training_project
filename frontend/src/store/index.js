@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
+import authReducer from './slices/authSlice';
 // Import slices (will be created later)
-// import authReducer from './slices/authSlice';
 // import boardsReducer from './slices/boardsSlice';
 // import ticketsReducer from './slices/ticketsSlice';
 // import inboxesReducer from './slices/inboxesSlice';
 
 export const store = configureStore({
   reducer: {
-    // auth: authReducer,
+    auth: authReducer,
     // boards: boardsReducer,
     // tickets: ticketsReducer,
     // inboxes: inboxesReducer,
