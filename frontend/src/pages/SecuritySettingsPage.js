@@ -11,7 +11,7 @@ import Button from '../components/common/Button';
 import Input from '../components/common/Input';
 import FormGroup from '../components/common/FormGroup';
 import Alert from '../components/common/Alert';
-import ConfirmModal from '../components/common/ConfirmModal';
+import SuspendAccountWizard from '../components/settings/SuspendAccountWizard';
 import useFormValidation from '../hooks/useFormValidation';
 import { validateRequired, validatePassword, validatePasswordConfirmation } from '../utils/validationUtils';
 
@@ -77,10 +77,11 @@ const SecuritySettingsPage = () => {
     }
   };
 
-  const handleSuspendAccount = async () => {
+  const handleSuspendAccount = async ({ suspensionMessage, password }) => {
     setSuspending(true);
     try {
-      await dispatch(suspendAccount()).unwrap();
+      await dispatch(suspendAccount({ suspensionMessage, password })).unwrap();
+      setSuspendModalShow(false);
       dispatch(logout());
       navigate('/login');
     } catch (err) {
@@ -200,14 +201,10 @@ const SecuritySettingsPage = () => {
         </Col>
       </Row>
 
-      {/* Suspend Account Confirmation Modal */}
-      <ConfirmModal
+      {/* Suspend Account Wizard */}
+      <SuspendAccountWizard
         show={suspendModalShow}
         onHide={() => setSuspendModalShow(false)}
-        title={t('settings.suspendAccount') || 'Suspend Account'}
-        message={t('settings.suspendConfirm') || 'Are you sure you want to suspend your account? You will need to contact support to reactivate it.'}
-        confirmLabel={t('settings.suspendAccount') || 'Suspend Account'}
-        variant="danger"
         onConfirm={handleSuspendAccount}
         loading={suspending}
       />

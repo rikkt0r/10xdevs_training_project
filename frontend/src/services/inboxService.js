@@ -56,7 +56,7 @@ const inboxService = {
    * Test inbox configuration before saving
    */
   testInboxConfig: async (inboxData) => {
-    const response = await api.post('/inboxes/test-config', inboxData);
+    const response = await api.post('/inboxes/test', inboxData);
     return response.data;
   }
 };

@@ -11,6 +11,7 @@ import EmptyState from '../components/common/EmptyState';
 import Alert from '../components/common/Alert';
 import ConfirmModal from '../components/common/ConfirmModal';
 import InboxCard from '../components/settings/InboxCard';
+import ConnectionTestModal from '../components/settings/ConnectionTestModal';
 
 const InboxListPage = () => {
   const { t } = useTranslation();
@@ -22,6 +23,9 @@ const InboxListPage = () => {
   const [deleteModalShow, setDeleteModalShow] = useState(false);
   const [selectedInbox, setSelectedInbox] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [testModalShow, setTestModalShow] = useState(false);
+  const [testResult, setTestResult] = useState(null);
+  const [testLoading, setTestLoading] = useState(false);
 
   useEffect(() => {
     loadInboxes();
@@ -55,14 +59,26 @@ const InboxListPage = () => {
   };
 
   const handleTestConnection = async (inboxId) => {
-    setActionLoading(true);
+    setTestModalShow(true);
+    setTestLoading(true);
+    setTestResult(null);
+
     try {
-      await inboxService.testConnection(inboxId);
-      alert(t('settings.connectionSuccess') || 'Connection test successful!');
+      const response = await inboxService.testConnection(inboxId);
+      setTestResult(response.data);
     } catch (err) {
-      alert(t('settings.connectionFailed') || 'Connection test failed. Please check your settings.');
+      setTestResult(
+        err.response?.data || {
+          data: {
+            imap_status: 'failed',
+            smtp_status: 'failed',
+            imap_error: t('settings.connectionFailed') || 'Connection test failed',
+            smtp_error: t('settings.connectionFailed') || 'Connection test failed',
+          },
+        }
+      );
     } finally {
-      setActionLoading(false);
+      setTestLoading(false);
     }
   };
 
@@ -138,7 +154,7 @@ const InboxListPage = () => {
                     onEdit={() => handleEditInbox(inbox.id)}
                     onTest={() => handleTestConnection(inbox.id)}
                     onDelete={() => openDeleteModal(inbox)}
-                    testing={actionLoading}
+                    testing={testLoading}
                   />
                 </Col>
               ))}
@@ -160,6 +176,17 @@ const InboxListPage = () => {
         variant="danger"
         onConfirm={handleDeleteInbox}
         loading={actionLoading}
+      />
+
+      {/* Connection Test Modal */}
+      <ConnectionTestModal
+        show={testModalShow}
+        onHide={() => {
+          setTestModalShow(false);
+          setTestResult(null);
+        }}
+        testResult={testResult}
+        loading={testLoading}
       />
     </ManagerLayout>
   );

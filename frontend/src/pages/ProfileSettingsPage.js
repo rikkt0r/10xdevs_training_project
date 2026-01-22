@@ -7,11 +7,13 @@ import ManagerLayout from '../components/layout/ManagerLayout';
 import Card from '../components/common/Card';
 import Button from '../components/common/Button';
 import Input from '../components/common/Input';
+import Select from '../components/common/Select';
 import FormGroup from '../components/common/FormGroup';
 import Alert from '../components/common/Alert';
 import Spinner from '../components/common/Spinner';
 import useFormValidation from '../hooks/useFormValidation';
 import { validateRequired } from '../utils/validationUtils';
+import { getTimezones, getBrowserTimezone } from '../utils/timezoneUtils';
 
 const ProfileSettingsPage = () => {
   const { t } = useTranslation();
@@ -39,6 +41,7 @@ const ProfileSettingsPage = () => {
     {
       name: profile?.name || '',
       email: profile?.email || '',
+      timezone: profile?.timezone || getBrowserTimezone(),
     },
     validationRules
   );
@@ -47,6 +50,7 @@ const ProfileSettingsPage = () => {
     if (profile) {
       setFieldValue('name', profile.name);
       setFieldValue('email', profile.email);
+      setFieldValue('timezone', profile.timezone || getBrowserTimezone());
     }
   }, [profile, setFieldValue]);
 
@@ -60,6 +64,7 @@ const ProfileSettingsPage = () => {
     try {
       await dispatch(updateProfile({
         name: formValues.name,
+        timezone: formValues.timezone,
       })).unwrap();
       setSuccessMessage(t('settings.profileUpdated') || 'Profile updated successfully');
       setTimeout(() => setSuccessMessage(''), 3000);
@@ -129,6 +134,21 @@ const ProfileSettingsPage = () => {
               value={values.email}
               disabled
               readOnly
+            />
+          </FormGroup>
+
+          <FormGroup
+            label={t('settings.timezone') || 'Timezone'}
+            helpText={t('settings.timezoneHelp') || 'Select your preferred timezone for displaying dates'}
+            htmlFor="timezone"
+          >
+            <Select
+              id="timezone"
+              name="timezone"
+              value={values.timezone}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              options={getTimezones()}
             />
           </FormGroup>
 

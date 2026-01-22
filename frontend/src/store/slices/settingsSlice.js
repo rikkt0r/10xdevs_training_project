@@ -46,9 +46,9 @@ export const changePassword = createAsyncThunk(
 
 export const suspendAccount = createAsyncThunk(
   'settings/suspendAccount',
-  async (_, { rejectWithValue }) => {
+  async ({ suspensionMessage, password }, { rejectWithValue }) => {
     try {
-      const response = await settingsService.suspendAccount();
+      const response = await settingsService.suspendAccount(suspensionMessage, password);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || { message: 'Failed to suspend account' });

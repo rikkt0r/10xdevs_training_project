@@ -8,15 +8,15 @@ const settingsService = {
    * Get current user profile
    */
   getProfile: async () => {
-    const response = await api.get('/managers/me');
+    const response = await api.get('/me');
     return response.data;
   },
 
   /**
-   * Update user profile
+   * Update user profile (name, timezone)
    */
   updateProfile: async (profileData) => {
-    const response = await api.put('/managers/me', profileData);
+    const response = await api.patch('/me', profileData);
     return response.data;
   },
 
@@ -24,7 +24,7 @@ const settingsService = {
    * Change password
    */
   changePassword: async (currentPassword, newPassword) => {
-    const response = await api.post('/managers/me/change-password', {
+    const response = await api.put('/me/password', {
       current_password: currentPassword,
       new_password: newPassword
     });
@@ -34,8 +34,11 @@ const settingsService = {
   /**
    * Suspend account
    */
-  suspendAccount: async () => {
-    const response = await api.post('/managers/me/suspend');
+  suspendAccount: async (suspensionMessage, password) => {
+    const response = await api.post('/me/suspend', {
+      suspension_message: suspensionMessage,
+      password: password
+    });
     return response.data;
   },
 
@@ -43,7 +46,7 @@ const settingsService = {
    * Request account data export
    */
   exportAccountData: async () => {
-    const response = await api.get('/managers/me/export', {
+    const response = await api.get('/me/export', {
       responseType: 'blob'
     });
     return response.data;

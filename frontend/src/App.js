@@ -17,12 +17,20 @@ import PublicTicketViewPage from './pages/PublicTicketViewPage';
 
 // Import protected pages
 import DashboardPage from './pages/DashboardPage';
+import BoardListPage from './pages/BoardListPage';
+import BoardDetailPage from './pages/BoardDetailPage';
+import BoardFormPage from './pages/BoardFormPage';
+import TicketListPage from './pages/TicketListPage';
+import TicketDetailPage from './pages/TicketDetailPage';
+import StandbyQueuePage from './pages/StandbyQueuePage';
+import StandbyQueueItemPage from './pages/StandbyQueueItemPage';
+import ProfileSettingsPage from './pages/ProfileSettingsPage';
+import SecuritySettingsPage from './pages/SecuritySettingsPage';
+import InboxListPage from './pages/InboxListPage';
+import InboxFormPage from './pages/InboxFormPage';
 
 // Import components
 import ProtectedRoute from './components/ProtectedRoute';
-
-// Import pages (will be created later)
-// import BoardPage from './pages/BoardPage';
 
 function App() {
   return (
@@ -51,15 +59,117 @@ function App() {
             }
           />
 
-          {/* Protected manager routes (will be created later) */}
-          {/* <Route
+          {/* Board routes */}
+          <Route
+            path="/boards"
+            element={
+              <ProtectedRoute>
+                <BoardListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/boards/new"
+            element={
+              <ProtectedRoute>
+                <BoardFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/boards/:id"
             element={
               <ProtectedRoute>
-                <BoardPage />
+                <BoardDetailPage />
               </ProtectedRoute>
             }
-          /> */}
+          />
+          <Route
+            path="/boards/:id/edit"
+            element={
+              <ProtectedRoute>
+                <BoardFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/boards/:boardId/tickets/:ticketId"
+            element={
+              <ProtectedRoute>
+                <TicketDetailPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Ticket routes */}
+          <Route
+            path="/tickets"
+            element={
+              <ProtectedRoute>
+                <TicketListPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Standby queue routes */}
+          <Route
+            path="/standby-queue"
+            element={
+              <ProtectedRoute>
+                <StandbyQueuePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/standby-queue/:id"
+            element={
+              <ProtectedRoute>
+                <StandbyQueueItemPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Settings routes */}
+          <Route
+            path="/settings/profile"
+            element={
+              <ProtectedRoute>
+                <ProfileSettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/security"
+            element={
+              <ProtectedRoute>
+                <SecuritySettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/inboxes"
+            element={
+              <ProtectedRoute>
+                <InboxListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/inboxes/new"
+            element={
+              <ProtectedRoute>
+                <InboxFormPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings/inboxes/:inboxId/edit"
+            element={
+              <ProtectedRoute>
+                <InboxFormPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* 404 */}
           <Route path="*" element={<div><h1>404</h1><p>Page not found</p></div>} />
