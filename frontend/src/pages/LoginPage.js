@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { Form, Button, Card, Alert, Container, Row, Col } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { login, clearError } from '../store/slices/authSlice';
+import PublicLayout from '../components/layout/PublicLayout';
+import Card from '../components/common/Card';
+import Button from '../components/common/Button';
+import Input from '../components/common/Input';
+import FormGroup from '../components/common/FormGroup';
+import Alert from '../components/common/Alert';
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -69,68 +75,72 @@ const LoginPage = () => {
   };
 
   return (
-    <Container>
-      <Row className="justify-content-center mt-5">
-        <Col md={6} lg={5}>
-          <Card>
-            <Card.Body>
-              <h2 className="text-center mb-4">{t('auth.login')}</h2>
+    <PublicLayout centered maxWidth="sm">
+      <Card title={t('auth.login')} className="shadow-sm">
+        {error && (
+          <Alert
+            variant="danger"
+            dismissible
+            onClose={() => dispatch(clearError())}
+            className="mb-3"
+          >
+            {error.message || t('auth.errors.loginFailed')}
+          </Alert>
+        )}
 
-              {error && (
-                <Alert variant="danger" dismissible onClose={() => dispatch(clearError())}>
-                  {error.message || t('auth.errors.loginFailed')}
-                </Alert>
-              )}
+        <Form onSubmit={handleSubmit}>
+          <FormGroup
+            label={t('auth.email')}
+            error={validationErrors.email}
+            htmlFor="email"
+          >
+            <Input
+              type="email"
+              name="email"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              error={validationErrors.email}
+              placeholder={t('auth.emailPlaceholder')}
+            />
+          </FormGroup>
 
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="email">
-                  <Form.Label>{t('auth.email')}</Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    isInvalid={!!validationErrors.email}
-                    placeholder={t('auth.emailPlaceholder')}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {validationErrors.email}
-                  </Form.Control.Feedback>
-                </Form.Group>
+          <FormGroup
+            label={t('auth.password')}
+            error={validationErrors.password}
+            htmlFor="password"
+          >
+            <Input
+              type="password"
+              name="password"
+              id="password"
+              value={formData.password}
+              onChange={handleChange}
+              error={validationErrors.password}
+              placeholder={t('auth.passwordPlaceholder')}
+            />
+          </FormGroup>
 
-                <Form.Group className="mb-3" controlId="password">
-                  <Form.Label>{t('auth.password')}</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    isInvalid={!!validationErrors.password}
-                    placeholder={t('auth.passwordPlaceholder')}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {validationErrors.password}
-                  </Form.Control.Feedback>
-                </Form.Group>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <Link to="/forgot-password">{t('auth.forgotPassword')}</Link>
+          </div>
 
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <Link to="/forgot-password">{t('auth.forgotPassword')}</Link>
-                </div>
+          <Button
+            variant="primary"
+            type="submit"
+            loading={loading}
+            fullWidth
+          >
+            {t('auth.login')}
+          </Button>
+        </Form>
 
-                <Button variant="primary" type="submit" disabled={loading} className="w-100">
-                  {loading ? t('common.loading') : t('auth.login')}
-                </Button>
-              </Form>
-
-              <div className="text-center mt-3">
-                <span>{t('auth.noAccount')} </span>
-                <Link to="/register">{t('auth.register')}</Link>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+        <div className="text-center mt-3">
+          <span>{t('auth.noAccount')} </span>
+          <Link to="/register">{t('auth.register')}</Link>
+        </div>
+      </Card>
+    </PublicLayout>
   );
 };
 

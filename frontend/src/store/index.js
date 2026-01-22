@@ -1,16 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
-// Import slices (will be created later)
-// import boardsReducer from './slices/boardsSlice';
-// import ticketsReducer from './slices/ticketsSlice';
-// import inboxesReducer from './slices/inboxesSlice';
+import boardsReducer from './slices/boardsSlice';
+import ticketsReducer from './slices/ticketsSlice';
+import standbyQueueReducer from './slices/standbyQueueSlice';
+import settingsReducer from './slices/settingsSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    // boards: boardsReducer,
-    // tickets: ticketsReducer,
-    // inboxes: inboxesReducer,
+    boards: boardsReducer,
+    tickets: ticketsReducer,
+    standbyQueue: standbyQueueReducer,
+    settings: settingsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

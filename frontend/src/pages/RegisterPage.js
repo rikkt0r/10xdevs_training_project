@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
-import { Form, Button, Card, Alert, Container, Row, Col } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { register, clearError } from '../store/slices/authSlice';
+import PublicLayout from '../components/layout/PublicLayout';
+import Card from '../components/common/Card';
+import Button from '../components/common/Button';
+import Input from '../components/common/Input';
+import FormGroup from '../components/common/FormGroup';
+import Alert from '../components/common/Alert';
 
 const RegisterPage = () => {
   const { t } = useTranslation();
@@ -92,121 +98,118 @@ const RegisterPage = () => {
 
   if (registrationSuccess) {
     return (
-      <Container>
-        <Row className="justify-content-center mt-5">
-          <Col md={6} lg={5}>
-            <Card>
-              <Card.Body>
-                <h2 className="text-center mb-4">{t('auth.registrationSuccess')}</h2>
-                <Alert variant="success">
-                  <p>{t('auth.verificationEmailSent')}</p>
-                  <p>{t('auth.checkYourEmail')}</p>
-                </Alert>
-                <div className="text-center">
-                  <Link to="/login" className="btn btn-primary">
-                    {t('auth.goToLogin')}
-                  </Link>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+      <PublicLayout centered maxWidth="sm">
+        <Card title={t('auth.registrationSuccess')} className="shadow-sm">
+          <Alert variant="success" show>
+            <p>{t('auth.verificationEmailSent')}</p>
+            <p className="mb-0">{t('auth.checkYourEmail')}</p>
+          </Alert>
+          <div className="text-center mt-3">
+            <Button variant="primary" onClick={() => navigate('/login')}>
+              {t('auth.goToLogin')}
+            </Button>
+          </div>
+        </Card>
+      </PublicLayout>
     );
   }
 
   return (
-    <Container>
-      <Row className="justify-content-center mt-5">
-        <Col md={6} lg={5}>
-          <Card>
-            <Card.Body>
-              <h2 className="text-center mb-4">{t('auth.register')}</h2>
+    <PublicLayout centered maxWidth="sm">
+      <Card title={t('auth.register')} className="shadow-sm">
+        {error && (
+          <Alert
+            variant="danger"
+            dismissible
+            onClose={() => dispatch(clearError())}
+            className="mb-3"
+          >
+            {error.message || t('auth.errors.registrationFailed')}
+          </Alert>
+        )}
 
-              {error && (
-                <Alert variant="danger" dismissible onClose={() => dispatch(clearError())}>
-                  {error.message || t('auth.errors.registrationFailed')}
-                </Alert>
-              )}
+        <Form onSubmit={handleSubmit}>
+          <FormGroup
+            label={t('auth.name')}
+            error={validationErrors.name}
+            htmlFor="name"
+          >
+            <Input
+              type="text"
+              name="name"
+              id="name"
+              value={formData.name}
+              onChange={handleChange}
+              error={validationErrors.name}
+              placeholder={t('auth.namePlaceholder')}
+            />
+          </FormGroup>
 
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3" controlId="name">
-                  <Form.Label>{t('auth.name')}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    isInvalid={!!validationErrors.name}
-                    placeholder={t('auth.namePlaceholder')}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {validationErrors.name}
-                  </Form.Control.Feedback>
-                </Form.Group>
+          <FormGroup
+            label={t('auth.email')}
+            error={validationErrors.email}
+            htmlFor="email"
+          >
+            <Input
+              type="email"
+              name="email"
+              id="email"
+              value={formData.email}
+              onChange={handleChange}
+              error={validationErrors.email}
+              placeholder={t('auth.emailPlaceholder')}
+            />
+          </FormGroup>
 
-                <Form.Group className="mb-3" controlId="email">
-                  <Form.Label>{t('auth.email')}</Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    isInvalid={!!validationErrors.email}
-                    placeholder={t('auth.emailPlaceholder')}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {validationErrors.email}
-                  </Form.Control.Feedback>
-                </Form.Group>
+          <FormGroup
+            label={t('auth.password')}
+            error={validationErrors.password}
+            helpText={t('auth.passwordRequirements')}
+            htmlFor="password"
+          >
+            <Input
+              type="password"
+              name="password"
+              id="password"
+              value={formData.password}
+              onChange={handleChange}
+              error={validationErrors.password}
+              placeholder={t('auth.passwordPlaceholder')}
+            />
+          </FormGroup>
 
-                <Form.Group className="mb-3" controlId="password">
-                  <Form.Label>{t('auth.password')}</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    isInvalid={!!validationErrors.password}
-                    placeholder={t('auth.passwordPlaceholder')}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {validationErrors.password}
-                  </Form.Control.Feedback>
-                  <Form.Text className="text-muted">
-                    {t('auth.passwordRequirements')}
-                  </Form.Text>
-                </Form.Group>
+          <FormGroup
+            label={t('auth.confirmPassword')}
+            error={validationErrors.confirmPassword}
+            htmlFor="confirmPassword"
+          >
+            <Input
+              type="password"
+              name="confirmPassword"
+              id="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              error={validationErrors.confirmPassword}
+              placeholder={t('auth.confirmPasswordPlaceholder')}
+            />
+          </FormGroup>
 
-                <Form.Group className="mb-3" controlId="confirmPassword">
-                  <Form.Label>{t('auth.confirmPassword')}</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    isInvalid={!!validationErrors.confirmPassword}
-                    placeholder={t('auth.confirmPasswordPlaceholder')}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {validationErrors.confirmPassword}
-                  </Form.Control.Feedback>
-                </Form.Group>
+          <Button
+            variant="primary"
+            type="submit"
+            loading={loading}
+            fullWidth
+          >
+            {t('auth.register')}
+          </Button>
+        </Form>
 
-                <Button variant="primary" type="submit" disabled={loading} className="w-100">
-                  {loading ? t('common.loading') : t('auth.register')}
-                </Button>
-              </Form>
-
-              <div className="text-center mt-3">
-                <span>{t('auth.haveAccount')} </span>
-                <Link to="/login">{t('auth.login')}</Link>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+        <div className="text-center mt-3">
+          <span>{t('auth.haveAccount')} </span>
+          <Link to="/login">{t('auth.login')}</Link>
+        </div>
+      </Card>
+    </PublicLayout>
   );
 };
 
