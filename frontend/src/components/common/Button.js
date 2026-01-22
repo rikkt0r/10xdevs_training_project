@@ -25,11 +25,13 @@ const Button = ({
       disabled={disabled || loading}
       onClick={onClick}
       className={`${fullWidth ? 'w-100' : ''} ${className}`}
+      aria-busy={loading}
       {...props}
     >
       {loading ? (
         <>
           <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />
+          <span className="sr-only">Loading...</span>
           {children}
         </>
       ) : (

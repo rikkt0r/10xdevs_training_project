@@ -1,0 +1,381 @@
+/**
+ * Responsive Design Utilities
+ * Breakpoints: Mobile (<768px), Tablet (768-1024px), Desktop (>1024px)
+ */
+
+/* ===== Breakpoints ===== */
+:root {
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1200px;
+  --breakpoint-xxl: 1400px;
+}
+
+/* ===== Mobile First Base Styles ===== */
+
+/* Container max-widths for different breakpoints */
+.container-responsive {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 576px) {
+  .container-responsive {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container-responsive {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-responsive {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container-responsive {
+    max-width: 1140px;
+  }
+}
+
+/* ===== Typography Responsive ===== */
+
+/* Responsive font sizes */
+.h1-responsive {
+  font-size: 1.75rem;
+}
+
+.h2-responsive {
+  font-size: 1.5rem;
+}
+
+.h3-responsive {
+  font-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .h1-responsive {
+    font-size: 2.5rem;
+  }
+
+  .h2-responsive {
+    font-size: 2rem;
+  }
+
+  .h3-responsive {
+    font-size: 1.75rem;
+  }
+}
+
+/* ===== Layout Utilities ===== */
+
+/* Stack vertically on mobile, horizontal on tablet+ */
+.stack-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .stack-mobile {
+    flex-direction: row;
+  }
+}
+
+/* Hide/show based on breakpoint */
+.mobile-only {
+  display: block;
+}
+
+.tablet-up {
+  display: none;
+}
+
+.desktop-up {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none;
+  }
+
+  .tablet-up {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .desktop-up {
+    display: block;
+  }
+}
+
+/* ===== Grid Utilities ===== */
+
+/* Responsive grid */
+.grid-responsive {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .grid-responsive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-responsive {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ===== Navigation Responsive ===== */
+
+/* Mobile hamburger menu */
+.navbar-mobile {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 280px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s ease;
+  z-index: 1000;
+}
+
+.navbar-mobile.open {
+  left: 0;
+}
+
+@media (min-width: 1024px) {
+  .navbar-mobile {
+    position: static;
+    width: auto;
+    height: auto;
+    box-shadow: none;
+  }
+}
+
+/* Mobile overlay */
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
+}
+
+.mobile-overlay.active {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .mobile-overlay {
+    display: none !important;
+  }
+}
+
+/* ===== Card Responsive ===== */
+
+/* Cards stack on mobile, side-by-side on tablet+ */
+.card-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ===== Table Responsive ===== */
+
+/* Horizontal scroll on mobile for tables */
+.table-responsive-mobile {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+  .table-responsive-mobile table {
+    min-width: 600px;
+  }
+}
+
+/* ===== Form Responsive ===== */
+
+/* Full width inputs on mobile */
+.form-responsive .form-control,
+.form-responsive .form-select {
+  width: 100%;
+}
+
+/* Side-by-side form groups on desktop */
+.form-row-responsive {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .form-row-responsive {
+    flex-direction: row;
+  }
+
+  .form-row-responsive > * {
+    flex: 1;
+  }
+}
+
+/* ===== Button Responsive ===== */
+
+/* Full width buttons on mobile */
+.btn-responsive {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .btn-responsive {
+    width: auto;
+  }
+}
+
+/* Button group stacks vertically on mobile */
+.btn-group-responsive {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .btn-group-responsive {
+    flex-direction: row;
+  }
+}
+
+/* ===== Spacing Responsive ===== */
+
+/* Responsive padding */
+.p-responsive {
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .p-responsive {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .p-responsive {
+    padding: 2rem;
+  }
+}
+
+/* Responsive margin */
+.m-responsive {
+  margin: 1rem;
+}
+
+@media (min-width: 768px) {
+  .m-responsive {
+    margin: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .m-responsive {
+    margin: 2rem;
+  }
+}
+
+/* ===== Sidebar Responsive ===== */
+
+/* Collapsible sidebar */
+.sidebar-responsive {
+  width: 250px;
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 767px) {
+  .sidebar-responsive {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    z-index: 1050;
+  }
+
+  .sidebar-responsive.show {
+    transform: translateX(0);
+  }
+}
+
+/* ===== Touch Target Size ===== */
+
+/* Minimum 44x44px touch targets for mobile */
+@media (max-width: 767px) {
+  button,
+  a,
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ===== Print Styles ===== */
+
+@media print {
+  /* Hide navigation and non-essential elements */
+  .no-print,
+  nav,
+  .sidebar,
+  .btn,
+  .navbar {
+    display: none !important;
+  }
+
+  /* Ensure content fits on page */
+  body {
+    font-size: 12pt;
+  }
+
+  /* Page breaks */
+  h1,
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+
+  /* Show URLs for links */
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+}

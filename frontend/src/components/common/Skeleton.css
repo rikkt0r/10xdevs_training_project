@@ -1,0 +1,44 @@
+/* Skeleton loading styles */
+
+.skeleton {
+  background-color: #e9ecef;
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.skeleton-circle {
+  border-radius: 50% !important;
+}
+
+.skeleton-default {
+  background: linear-gradient(90deg, #e9ecef 25%, #dee2e6 50%, #e9ecef 75%);
+  background-size: 200% 100%;
+}
+
+/* Wave animation */
+@keyframes skeleton-wave {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.placeholder-wave .skeleton {
+  animation: skeleton-wave 1.5s linear infinite;
+}
+
+/* Glow animation */
+@keyframes skeleton-glow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.placeholder-glow .skeleton {
+  animation: skeleton-glow 2s ease-in-out infinite;
+}

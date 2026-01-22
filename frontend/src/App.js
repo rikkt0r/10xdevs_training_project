@@ -31,12 +31,16 @@ import InboxFormPage from './pages/InboxFormPage';
 
 // Import components
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/common/ErrorBoundary';
+import { ToastProvider } from './contexts/ToastContext';
 
 function App() {
   return (
-    <div className="App">
-      <Container>
-        <Routes>
+    <ErrorBoundary level="app">
+      <ToastProvider>
+        <div className="App">
+          <Container>
+            <Routes>
           {/* Public routes */}
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<LoginPage />} />
@@ -176,6 +180,8 @@ function App() {
         </Routes>
       </Container>
     </div>
+      </ToastProvider>
+    </ErrorBoundary>
   );
 }
 
