@@ -16,6 +16,7 @@ from app.schemas.email_inbox import (
     TestConnectionResponse
 )
 from app.services.email_inbox_service import email_inbox_service
+from app.services.email_polling_service import add_polling_job, remove_polling_job
 
 router = APIRouter()
 
@@ -36,7 +37,7 @@ def list_inboxes(
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
-def create_inbox(
+async def create_inbox(
     request: CreateEmailInboxRequest,
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
@@ -52,6 +53,8 @@ def create_inbox(
 
     Passwords are encrypted before storage.
     """
+    from app.main import scheduler
+
     inbox = email_inbox_service.create_inbox(
         db=db,
         manager=current_manager,
@@ -69,6 +72,11 @@ def create_inbox(
         from_address=request.from_address,
         polling_interval=request.polling_interval
     )
+
+    # Add polling job if inbox is active
+    if inbox.is_active:
+        await add_polling_job(scheduler, inbox.id, inbox.polling_interval)
+
     return DataResponse[EmailInboxResponse](data=inbox)
 
 
@@ -91,7 +99,7 @@ def get_inbox(
 
 
 @router.put("/{inbox_id}", status_code=status.HTTP_200_OK)
-def update_inbox(
+async def update_inbox(
     inbox_id: int,
     request: UpdateEmailInboxRequest,
     current_manager: Manager = Depends(get_current_manager),
@@ -103,6 +111,12 @@ def update_inbox(
     Only provided fields will be updated.
     Passwords will be re-encrypted if changed.
     """
+    from app.main import scheduler
+
+    # Get old inbox state before update
+    old_inbox = email_inbox_service.get_inbox(db, current_manager, inbox_id)
+    old_is_active = old_inbox.is_active
+
     update_data = request.model_dump(exclude_unset=True)
 
     inbox = email_inbox_service.update_inbox(
@@ -111,12 +125,21 @@ def update_inbox(
         inbox_id=inbox_id,
         **update_data
     )
-    
+
+    # Handle job scheduling changes
+    if request.is_active is not None or request.polling_interval is not None:
+        if inbox.is_active:
+            # Reschedule job with new interval (or re-add if newly activated)
+            await add_polling_job(scheduler, inbox.id, inbox.polling_interval)
+        elif old_is_active and not inbox.is_active:
+            # Deactivated - remove job
+            await remove_polling_job(scheduler, inbox.id)
+
     return DataResponse[EmailInboxResponse](data=inbox)
 
 
 @router.delete("/{inbox_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_inbox(
+async def delete_inbox(
     inbox_id: int,
     current_manager: Manager = Depends(get_current_manager),
     db: Session = Depends(get_db)
@@ -127,6 +150,11 @@ def delete_inbox(
     Returns 404 if inbox not found.
     Returns 403 if inbox belongs to another manager.
     """
+    from app.main import scheduler
+
+    # Remove polling job before deletion
+    await remove_polling_job(scheduler, inbox_id)
+
     email_inbox_service.delete_inbox(db, current_manager, inbox_id)
     return None
 

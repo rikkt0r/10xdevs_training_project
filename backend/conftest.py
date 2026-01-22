@@ -62,6 +62,50 @@ hash_password = _test_hash_password
 verify_password = _test_verify_password
 
 
+@pytest.fixture(scope="session", autouse=True)
+def mock_scheduler_globally():
+    """
+    Mock the scheduler globally for all tests to prevent it from actually starting.
+    This runs once per test session before any tests.
+    """
+    from app.main import scheduler
+
+    # Prevent scheduler from actually starting
+    original_start = scheduler.start
+    original_shutdown = scheduler.shutdown
+
+    scheduler.start = MagicMock()
+    scheduler.shutdown = MagicMock()
+
+    yield
+
+    # Restore original methods (though session ends after this)
+    scheduler.start = original_start
+    scheduler.shutdown = original_shutdown
+
+
+@pytest.fixture(autouse=True)
+def reset_scheduler_state():
+    """
+    Reset scheduler state before each test to prevent "already running" errors.
+    This fixture runs before every test function.
+    """
+    from app.main import scheduler
+
+    # Mock the scheduler methods to prevent actual execution
+    scheduler.start = MagicMock()
+    scheduler.shutdown = MagicMock()
+    scheduler.add_job = MagicMock()
+    scheduler.remove_job = MagicMock()
+    scheduler.get_job = MagicMock(return_value=None)
+
+    yield
+
+    # Cleanup after test
+    scheduler.start.reset_mock()
+    scheduler.shutdown.reset_mock()
+
+
 @pytest.fixture(scope="function")
 def test_engine():
     """Create a test database engine using file-based SQLite."""
@@ -305,3 +349,29 @@ def expired_password_reset_token(test_db, verified_manager):
     test_db.commit()
 
     return token
+
+
+@pytest.fixture
+def mock_scheduler():
+    """
+    Create a fresh mock scheduler for tests that need to test scheduler functionality.
+    This provides a clean scheduler mock that won't have "already running" issues.
+    """
+    scheduler = MagicMock()
+    scheduler.start = MagicMock()
+    scheduler.shutdown = MagicMock()
+    scheduler.add_job = MagicMock()
+    scheduler.remove_job = MagicMock()
+    scheduler.get_job = MagicMock(return_value=None)
+    return scheduler
+
+
+@pytest.fixture
+def mock_session_local(test_db):
+    """
+    Mock SessionLocal to return the test database session.
+    Use this in tests that call functions which create their own database sessions.
+    """
+    with patch('app.services.email_polling_service.SessionLocal') as mock:
+        mock.return_value = test_db
+        yield mock

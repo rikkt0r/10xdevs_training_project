@@ -42,3 +42,9 @@ slowapi==0.1.9
 
 # Utilities
 python-dateutil==2.8.2
+
+# Background Jobs
+APScheduler==3.10.4
+
+# HTML Parsing
+beautifulsoup4==4.12.3

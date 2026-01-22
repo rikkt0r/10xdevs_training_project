@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import logging
 
 from app.core.config import settings
@@ -27,6 +28,9 @@ app = FastAPI(
     docs_url="/api/docs" if settings.DEBUG else None,
     redoc_url="/api/redoc" if settings.DEBUG else None,
 )
+
+# Create APScheduler instance
+scheduler = AsyncIOScheduler(timezone="UTC")
 
 # Add rate limiter state
 app.state.limiter = limiter
@@ -64,7 +68,20 @@ async def startup_event():
     logger.info(f"Starting {settings.PROJECT_NAME} v{settings.VERSION}")
     logger.info(f"Environment: {settings.APP_ENV}")
 
+    # Start APScheduler
+    scheduler.start()
+    logger.info("APScheduler started")
+
+    # Initialize email polling jobs
+    from app.services.email_polling_service import initialize_polling_jobs
+    await initialize_polling_jobs(scheduler)
+    logger.info("Email polling jobs initialized")
+
 @app.on_event("shutdown")
 async def shutdown_event():
     """Run on application shutdown."""
     logger.info("Shutting down application")
+
+    # Shutdown APScheduler gracefully
+    scheduler.shutdown(wait=True)
+    logger.info("APScheduler shut down")
