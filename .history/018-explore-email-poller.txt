@@ -1,0 +1,99 @@
+❯ let's explore the options for "Background IMAP polling service" (TODO-backend.md). What do you propose (on the high level, don't get into details)?
+
+Background IMAP Polling Service
+
+  Given the project constraints (self-contained Docker, PostgreSQL, single instance), here are the main approaches:
+
+Use APScheduler (In-Process)
+
+Best for: Simplicity, single-instance deployment
+
+- Runs inside the FastAPI process
+- Supports dynamic job scheduling (add/remove inboxes at runtime)
+- Can persist jobs to PostgreSQL (survives restarts)
+- No additional infrastructure needed
+
+FastAPI Process
+├── API endpoints
+└── APScheduler (background thread/asyncio)
+    ├── Inbox 1 poll job (every 5 min)
+    ├── Inbox 2 poll job (every 1 min)
+    └── ...
+
+  Pros: Simple, no extra services, works with existing PostgreSQL
+  Cons: Shares resources with API, not horizontally scalable
+
+  ---
+  Option 2: Celery + Redis
+
+  Best for: Scalability, production-grade
+
+  - Separate worker process(es)
+  - Celery Beat for periodic scheduling
+  - Requires Redis (or RabbitMQ)
+
+  Docker Container
+  ├── FastAPI (API)
+  ├── Celery Worker (tasks)
+  ├── Celery Beat (scheduler)
+  └── Redis (broker)
+
+  Pros: Battle-tested, scalable, isolated from API
+  Cons: Added complexity, Redis dependency, more moving parts
+
+  ---
+  Option 3: Separate Polling Service (asyncio)
+
+  Best for: Clean separation, no external dependencies
+
+  - Standalone Python script/service
+  - Uses asyncio for concurrent inbox polling
+  - Reads config from database, runs independently
+
+  Docker Container
+  ├── FastAPI (API) - port 8000
+  └── Poller Service (separate process)
+      └── asyncio event loop with scheduled tasks
+
+  Pros: Clean separation, no dependencies, lightweight
+  Cons: Need to manage two processes, custom scheduling logic
+
+  ---
+  Option 4: arq (Async Redis Queue)
+
+  Best for: Async-native, modern approach
+
+  - Built for asyncio (fits FastAPI well)
+  - Lightweight alternative to Celery
+  - Requires Redis
+
+  Pros: Async-native, simple API, good FastAPI integration
+  Cons: Redis dependency, smaller community than Celery
+
+  ---
+  Recommendation
+
+  For this project, I'd suggest Option 1 (APScheduler) because:
+
+  1. Single Docker container deployment (per PRD)
+  2. No need for horizontal scaling initially
+  3. PostgreSQL already available for job persistence
+  4. Minimal added complexity
+  5. Dynamic job management (inbox polling intervals are configurable)
+
+  If scalability becomes important later, migrating to Celery/arq is straightforward.
+
+  Which approach interests you?
+
+❯ Let's go with your recommendation. Implement this solution
+
+● Entered plan mode
+  Claude is now exploring and designing an implementation approach.
+
+● 3 Explore agents finished (ctrl+o to expand)
+   ├─ Explore email inbox and security · 39 tool uses · 50.6k tokens
+   │  ⎿  Done
+   ├─ Explore ticket creation and routing · 32 tool uses · 62.0k tokens
+   │  ⎿  Done
+   └─ Explore FastAPI app structure · 32 tool uses · 34.9k tokens
+      ⎿  Done
