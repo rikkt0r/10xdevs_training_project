@@ -15,11 +15,13 @@ import ResetPasswordPage from './pages/ResetPasswordPage';
 import PublicTicketFormPage from './pages/PublicTicketFormPage';
 import PublicTicketViewPage from './pages/PublicTicketViewPage';
 
+// Import protected pages
+import DashboardPage from './pages/DashboardPage';
+
 // Import components
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Import pages (will be created later)
-// import DashboardPage from './pages/DashboardPage';
 // import BoardPage from './pages/BoardPage';
 
 function App() {
@@ -44,7 +46,7 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <div><h1>Dashboard</h1><p>Coming soon...</p></div>
+                <DashboardPage />
               </ProtectedRoute>
             }
           />

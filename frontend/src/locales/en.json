@@ -60,7 +60,29 @@
     "title": "Dashboard",
     "boards": "Boards",
     "recentTickets": "Recent Tickets",
-    "standbyQueue": "Standby Queue"
+    "standbyQueue": "Standby Queue",
+    "totalBoards": "Total Boards",
+    "active": "active",
+    "itemsWaiting": "items waiting",
+    "newTickets": "New Tickets",
+    "requiresAction": "requires action",
+    "inProgress": "In Progress",
+    "beingWorkedOn": "being worked on",
+    "ticketsByState": "Tickets by State",
+    "recentActivity": "Recent Activity",
+    "createdToday": "Created Today",
+    "createdThisWeek": "Created This Week",
+    "quickActions": "Quick Actions",
+    "manageBoards": "Manage Boards",
+    "viewAllTickets": "View All Tickets",
+    "processStandbyQueue": "Process Standby Queue",
+    "manageInboxes": "Manage Inboxes",
+    "viewAll": "View All",
+    "view": "View",
+    "noRecentTickets": "No recent tickets",
+    "errors": {
+      "loadFailed": "Failed to load dashboard data. Please try again."
+    }
   },
   "boards": {
     "title": "Boards",

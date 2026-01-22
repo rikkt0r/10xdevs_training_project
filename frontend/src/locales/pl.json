@@ -60,7 +60,29 @@
     "title": "Panel",
     "boards": "Tablice",
     "recentTickets": "Ostatnie zgłoszenia",
-    "standbyQueue": "Kolejka oczekująca"
+    "standbyQueue": "Kolejka oczekująca",
+    "totalBoards": "Wszystkie tablice",
+    "active": "aktywne",
+    "itemsWaiting": "elementów oczekuje",
+    "newTickets": "Nowe zgłoszenia",
+    "requiresAction": "wymaga uwagi",
+    "inProgress": "W trakcie",
+    "beingWorkedOn": "w realizacji",
+    "ticketsByState": "Zgłoszenia według statusu",
+    "recentActivity": "Ostatnia aktywność",
+    "createdToday": "Utworzono dzisiaj",
+    "createdThisWeek": "Utworzono w tym tygodniu",
+    "quickActions": "Szybkie akcje",
+    "manageBoards": "Zarządzaj tablicami",
+    "viewAllTickets": "Zobacz wszystkie zgłoszenia",
+    "processStandbyQueue": "Przetwórz kolejkę oczekującą",
+    "manageInboxes": "Zarządzaj skrzynkami",
+    "viewAll": "Zobacz wszystkie",
+    "view": "Zobacz",
+    "noRecentTickets": "Brak ostatnich zgłoszeń",
+    "errors": {
+      "loadFailed": "Nie udało się załadować danych panelu. Spróbuj ponownie."
+    }
   },
   "boards": {
     "title": "Tablice",
