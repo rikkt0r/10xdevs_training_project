@@ -63,7 +63,7 @@ describe('Button Component', () => {
   describe('Loading State', () => {
     it('shows spinner when loading', () => {
       render(<Button loading>Loading</Button>);
-      expect(screen.getByRole('status')).toBeInTheDocument();
+      expect(screen.getByRole('status', { hidden: true })).toBeInTheDocument();
     });
 
     it('has aria-busy attribute when loading', () => {
@@ -123,7 +123,7 @@ describe('Button Component', () => {
 
     it('spinner is hidden from screen readers', () => {
       render(<Button loading>Loading</Button>);
-      const spinner = screen.getByRole('status');
+      const spinner = screen.getByRole('status', { hidden: true });
       expect(spinner).toHaveAttribute('aria-hidden', 'true');
     });
   });

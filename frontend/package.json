@@ -50,5 +50,14 @@
   "devDependencies": {
     "eslint": "^8.56.0",
     "prettier": "^3.1.1"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sass)$": "<rootDir>/src/__mocks__/styleMock.js",
+      "\\.(jpg|jpeg|png|gif|svg|webp)$": "<rootDir>/src/__mocks__/fileMock.js"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(date-fns|axios)/)"
+    ]
   }
 }

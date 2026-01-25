@@ -231,6 +231,7 @@ yarn-error.log*
 
 # Frontend Build
 frontend/build/
+frontend/coverage/
 frontend/dist/
 
 # Docker
