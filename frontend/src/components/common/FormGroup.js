@@ -14,7 +14,9 @@ const FormGroup = ({
   children,
   htmlFor,
 }) => {
-  const hasError = Boolean(error);
+  // Handle error as either string or object with error property
+  const errorMessage = typeof error === 'object' ? error?.error : error;
+  const hasError = Boolean(errorMessage);
 
   return (
     <Form.Group className={`mb-3 ${className}`}>
@@ -32,7 +34,7 @@ const FormGroup = ({
       )}
       {hasError && (
         <div className="invalid-feedback d-block">
-          {error}
+          {errorMessage}
         </div>
       )}
     </Form.Group>

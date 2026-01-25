@@ -37,7 +37,9 @@ const useFormValidation = (initialValues = {}, validationRules = {}) => {
 
     // Validate field on blur
     if (validationRules[name]) {
-      const error = validationRules[name](values[name], values);
+      const result = validationRules[name](values[name], values);
+      // Handle both object validation results and string errors
+      const error = result?.error !== undefined ? result.error : result;
       if (error) {
         setErrors(prev => ({
           ...prev,
@@ -51,7 +53,9 @@ const useFormValidation = (initialValues = {}, validationRules = {}) => {
     const newErrors = {};
 
     Object.keys(validationRules).forEach(fieldName => {
-      const error = validationRules[fieldName](values[fieldName], values);
+      const result = validationRules[fieldName](values[fieldName], values);
+      // Handle both object validation results and string errors
+      const error = result?.error !== undefined ? result.error : result;
       if (error) {
         newErrors[fieldName] = error;
       }

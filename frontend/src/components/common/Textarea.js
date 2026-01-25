@@ -21,7 +21,9 @@ const Textarea = ({
   className = '',
   ...props
 }) => {
-  const hasError = Boolean(error);
+  // Handle error as either string or object with error property
+  const errorMessage = typeof error === 'object' ? error?.error : error;
+  const hasError = Boolean(errorMessage);
   const charCount = value ? value.length : 0;
 
   return (
@@ -44,7 +46,7 @@ const Textarea = ({
       />
       {hasError && (
         <Form.Control.Feedback type="invalid">
-          {error}
+          {errorMessage}
         </Form.Control.Feedback>
       )}
       {showCharCount && (

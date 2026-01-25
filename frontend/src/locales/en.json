@@ -143,7 +143,10 @@
       "jiraProjectKey": "Jira Project Key",
       "trelloApiKey": "Trello API Key",
       "trelloToken": "Trello Token",
-      "trelloBoardId": "Trello Board ID"
+      "trelloBoardId": "Trello Board ID",
+      "uniqueName": "Unique Name (URL Slug)",
+      "uniqueNameHelp": "Lowercase letters, digits, hyphen",
+      "uniqueNamePlaceholder": "Unique name for the board (part of url)"
     },
     "errors": {
       "loadFailed": "Failed to load boards",
@@ -387,6 +390,7 @@
     "error": "Error",
     "success": "Success",
     "step": "Step",
-    "viewMore": "View more"
+    "viewMore": "View more",
+    "create": "Create"
   }
 }

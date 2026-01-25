@@ -20,7 +20,9 @@ const Input = ({
   className = '',
   ...props
 }) => {
-  const hasError = Boolean(error);
+  // Handle error as either string or object with error property
+  const errorMessage = typeof error === 'object' ? error?.error : error;
+  const hasError = Boolean(errorMessage);
 
   return (
     <>
@@ -41,7 +43,7 @@ const Input = ({
       />
       {hasError && (
         <Form.Control.Feedback type="invalid">
-          {error}
+          {errorMessage}
         </Form.Control.Feedback>
       )}
     </>

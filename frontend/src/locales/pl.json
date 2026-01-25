@@ -143,7 +143,10 @@
       "jiraProjectKey": "Klucz projektu Jira",
       "trelloApiKey": "Klucz API Trello",
       "trelloToken": "Token Trello",
-      "trelloBoardId": "ID tablicy Trello"
+      "trelloBoardId": "ID tablicy Trello",
+      "uniqueName": "Unikalna nazwa (URL)",
+      "uniqueNameHelp": "Małe litery, cyfry, myślnik",
+      "uniqueNamePlaceholder": "Unikalna nazwa tablicy (fragment url)"
     },
     "errors": {
       "loadFailed": "Nie udało się załadować tablic",
@@ -387,6 +390,7 @@
     "error": "Błąd",
     "success": "Sukces",
     "step": "Krok",
-    "viewMore": "Zobacz więcej"
+    "viewMore": "Zobacz więcej",
+    "create": "Utwórz"
   }
 }

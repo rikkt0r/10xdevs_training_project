@@ -50,6 +50,46 @@ export const validateRequired = (value, fieldName = 'This field') => {
 };
 
 /**
+ * Validate maximum length
+ * @param {string} value - Value to validate
+ * @param {number} maxLength - Maximum allowed length
+ * @param {string} fieldName - Field name for error message
+ * @returns {object} Validation result
+ */
+export const validateMaxLength = (value, maxLength, fieldName = 'This field') => {
+  if (!value) {
+    return { isValid: true, error: null };
+  }
+
+  const isTooLong = value.length > maxLength;
+
+  return {
+    isValid: !isTooLong,
+    error: isTooLong ? `${fieldName} must not exceed ${maxLength} characters` : null
+  };
+};
+
+/**
+ * Validate alphanumeric with hyphens (lowercase only)
+ * @param {string} value - Value to validate
+ * @param {string} fieldName - Field name for error message
+ * @returns {object} Validation result
+ */
+export const validateAlphanumericHyphen = (value, fieldName = 'This field') => {
+  if (!value) {
+    return { isValid: true, error: null };
+  }
+
+  const alphanumericHyphenRegex = /^[a-z0-9-]+$/;
+  const isValid = alphanumericHyphenRegex.test(value);
+
+  return {
+    isValid,
+    error: isValid ? null : `${fieldName} can only contain lowercase letters, numbers, and hyphens`
+  };
+};
+
+/**
  * Validate password confirmation
  * @param {string} password - Original password
  * @param {string} confirmPassword - Password confirmation

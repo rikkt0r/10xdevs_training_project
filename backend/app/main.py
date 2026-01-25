@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 # Create FastAPI app
 app = FastAPI(
+    debug=settings.DEBUG or None,
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     docs_url="/api/docs" if settings.DEBUG else None,

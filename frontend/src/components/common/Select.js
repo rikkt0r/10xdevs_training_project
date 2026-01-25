@@ -19,7 +19,9 @@ const Select = ({
   className = '',
   ...props
 }) => {
-  const hasError = Boolean(error);
+  // Handle error as either string or object with error property
+  const errorMessage = typeof error === 'object' ? error?.error : error;
+  const hasError = Boolean(errorMessage);
 
   return (
     <>
@@ -48,7 +50,7 @@ const Select = ({
       </Form.Select>
       {hasError && (
         <Form.Control.Feedback type="invalid">
-          {error}
+          {errorMessage}
         </Form.Control.Feedback>
       )}
     </>

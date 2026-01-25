@@ -7,7 +7,7 @@ import Textarea from '../common/Textarea';
 import Select from '../common/Select';
 import Button from '../common/Button';
 import useFormValidation from '../../hooks/useFormValidation';
-import { validateRequired } from '../../utils/validationUtils';
+import { validateRequired, validateMaxLength, validateAlphanumericHyphen } from '../../utils/validationUtils';
 
 /**
  * BoardForm component
@@ -18,6 +18,16 @@ const BoardForm = ({ initialValues = {}, onSubmit, loading = false }) => {
 
   const validationRules = {
     name: (value) => validateRequired(value, t('boards.errors.nameRequired')),
+    unique_name: (value) => {
+      const requiredCheck = validateRequired(value, t('boards.uniqueName'));
+      if (!requiredCheck.isValid) return requiredCheck;
+
+      const alphanumericCheck = validateAlphanumericHyphen(value, t('boards.uniqueName'));
+      if (!alphanumericCheck.isValid) return alphanumericCheck;
+
+      const maxLengthCheck = validateMaxLength(value, 255, t('boards.uniqueName'));
+      return maxLengthCheck;
+    },
   };
 
   const {
@@ -30,6 +40,7 @@ const BoardForm = ({ initialValues = {}, onSubmit, loading = false }) => {
   } = useFormValidation(
     {
       name: initialValues.name || '',
+      unique_name: initialValues.unique_name || '',
       greeting: initialValues.greeting || '',
       external_platform: initialValues.external_platform || '',
       external_project_key: initialValues.external_project_key || '',
@@ -66,6 +77,26 @@ const BoardForm = ({ initialValues = {}, onSubmit, loading = false }) => {
           onBlur={handleBlur}
           error={touched.name && errors.name}
           placeholder={t('boards.form.namePlaceholder') || 'Enter board name'}
+        />
+      </FormGroup>
+
+      <FormGroup
+        label={t('boards.form.uniqueName') || 'Unique Name'}
+        error={touched.unique_name && errors.unique_name}
+        required
+        helpText={t('boards.form.uniqueNameHelp') || 'URL-friendly identifier for this board (max 255 characters)'}
+        htmlFor="unique_name"
+      >
+        <Input
+          type="text"
+          id="unique_name"
+          name="unique_name"
+          value={values.unique_name}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          error={touched.unique_name && errors.unique_name}
+          placeholder={t('boards.form.uniqueNamePlaceholder') || 'e.g., support-tickets'}
+          maxLength={255}
         />
       </FormGroup>
 
