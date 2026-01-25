@@ -1,5 +1,9 @@
 # Simple Issue Tracker
 
+
+### WARNING: DO NOT USE THIS CODE, DO NOT JUDGE. THIS IS AI-GENERATED JUST FOR LULZ
+#### (it did cost something like 70USD in tokens ¯\\_(ツ)_/¯)
+
 A web application that enables managers to create ticket boards for collecting and tracking issues from users.
 
 ## Tech Stack
