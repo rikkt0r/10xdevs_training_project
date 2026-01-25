@@ -24,6 +24,7 @@ import TicketListPage from './pages/TicketListPage';
 import TicketDetailPage from './pages/TicketDetailPage';
 import StandbyQueuePage from './pages/StandbyQueuePage';
 import StandbyQueueItemPage from './pages/StandbyQueueItemPage';
+import SettingsPage from './pages/SettingsPage';
 import ProfileSettingsPage from './pages/ProfileSettingsPage';
 import SecuritySettingsPage from './pages/SecuritySettingsPage';
 import InboxListPage from './pages/InboxListPage';
@@ -134,6 +135,14 @@ function App() {
           />
 
           {/* Settings routes */}
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/settings/profile"
             element={

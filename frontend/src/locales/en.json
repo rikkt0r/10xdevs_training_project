@@ -80,6 +80,8 @@
     "viewAll": "View All",
     "view": "View",
     "noRecentTickets": "No recent tickets",
+    "noRecentTicketsMessage": "Nothing to see here",
+    "settings": "Settings",
     "errors": {
       "loadFailed": "Failed to load dashboard data. Please try again."
     }
@@ -107,7 +109,6 @@
     "noBoardsMessage": "No boards available. Create one",
     "uniqueName": "Unique Name (URL Slug)",
     "greetingMessage": "Greeting Message",
-    "keywords": "Keywords",
     "externalPlatform": "External Platform",
     "showArchived": "Show archived",
     "tabs": {
@@ -185,7 +186,7 @@
     "noHistory": "No status changes yet",
     "states": {
       "new": "New",
-      "in_progress": "In Progress",
+      "inProgress": "In Progress",
       "waiting": "Waiting",
       "resolved": "Resolved",
       "closed": "Closed",
@@ -237,6 +238,7 @@
     }
   },
   "settings": {
+    "pageDescription": "Manage your account and application settings",
     "profile": "Profile",
     "profileDescription": "Manage your account information",
     "profileUpdated": "Profile updated successfully",
@@ -384,6 +386,7 @@
     "loading": "Loading...",
     "error": "Error",
     "success": "Success",
-    "step": "Step"
+    "step": "Step",
+    "viewMore": "View more"
   }
 }

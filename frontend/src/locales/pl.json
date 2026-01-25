@@ -80,6 +80,8 @@
     "viewAll": "Zobacz wszystkie",
     "view": "Zobacz",
     "noRecentTickets": "Brak ostatnich zgłoszeń",
+    "noRecentTicketsMessage": "Nie ma tu nic do zobaczenia",
+    "settings": "Ustawienia",
     "errors": {
       "loadFailed": "Nie udało się załadować danych panelu. Spróbuj ponownie."
     }
@@ -107,7 +109,6 @@
     "noBoardsMessage": "Nie ma dostępnych tablic. Utwórz coś",
     "uniqueName": "Unikalna nazwa (slug URL)",
     "greetingMessage": "Wiadomość powitalna",
-    "keywords": "Słowa kluczowe",
     "externalPlatform": "Platforma zewnętrzna",
     "showArchived": "Pokaż zarchiwizowane",
     "tabs": {
@@ -185,7 +186,7 @@
     "noHistory": "Brak zmian statusu",
     "states": {
       "new": "Nowe",
-      "in_progress": "W trakcie",
+      "inProgress": "W trakcie",
       "waiting": "Oczekujące",
       "resolved": "Rozwiązane",
       "closed": "Zamknięte",
@@ -237,6 +238,7 @@
     }
   },
   "settings": {
+    "pageDescription": "Zarządzaj kontem i ustawieniami aplikacji",
     "profile": "Profil",
     "profileDescription": "Zarządzaj informacjami o koncie",
     "profileUpdated": "Profil zaktualizowany pomyślnie",
@@ -384,6 +386,7 @@
     "loading": "Ładowanie...",
     "error": "Błąd",
     "success": "Sukces",
-    "step": "Krok"
+    "step": "Krok",
+    "viewMore": "Zobacz więcej"
   }
 }
