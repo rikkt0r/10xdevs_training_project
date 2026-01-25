@@ -11,7 +11,7 @@ import BoardForm from '../components/boards/BoardForm';
 
 const BoardFormPage = () => {
   const { t } = useTranslation();
-  const { boardId } = useParams();
+  const { id: boardId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentBoard, loading, error } = useSelector((state) => state.boards);

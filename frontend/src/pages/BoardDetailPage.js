@@ -15,7 +15,7 @@ import EmptyState from '../components/common/EmptyState';
 
 const BoardDetailPage = () => {
   const { t } = useTranslation();
-  const { boardId } = useParams();
+  const { id: boardId } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentBoard, loading, error } = useSelector((state) => state.boards);
@@ -198,6 +198,10 @@ const BoardDetailPage = () => {
                   <div className="mb-3">
                     <strong>{t('boards.greeting') || 'Greeting'}:</strong>{' '}
                     {currentBoard.greeting || '-'}
+                  </div>
+                <div className="mb-3">
+                    <strong>{t('boards.unique_name')}:</strong>{' '}
+                    {currentBoard.unique_name || '-'}
                   </div>
                   <div className="mb-3">
                     <strong>{t('boards.externalPlatform') || 'External Platform'}:</strong>{' '}

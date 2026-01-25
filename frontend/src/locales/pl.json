@@ -381,6 +381,7 @@
     "profile": "Profil"
   },
   "common": {
+    "actions": "Akcje",
     "save": "Zapisz",
     "cancel": "Anuluj",
     "delete": "Usuń",
