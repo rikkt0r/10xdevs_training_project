@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(alembic upgrade:*)",
+      "Bash(comm:*)",
+      "Bash(docker compose:*)",
+      "Bash(docker inspect:*)",
+      "Bash(docker logs:*)",
+      "Bash(docker port:*)",
+      "Bash(echo:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(nc:*)",
+      "Bash(npm test:*)",
+      "Bash(pip show:*)",
+      "Bash(pytest:*)",
+      "Bash(python -m json.tool:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(python3 -m json.tool:*)",
+      "Bash(python3 -m pytest:*)",
+      "Bash(source:*)",
+      "Bash(ss:*)",
+      "Bash(tree:*)",
+      "Bash(wc:*)",
+      "Bash(xargs:*)",
+      "Skill(read-docs)"
+    ],
+    "additionalDirectories": [
+      "/tmp"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": false,
+    "excludedCommands": [
+      "docker"
+    ]
+  }
+}
