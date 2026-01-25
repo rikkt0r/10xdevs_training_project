@@ -3,7 +3,7 @@ Security utilities for authentication and encryption.
 """
 from datetime import datetime, timedelta, timezone
 from typing import Optional, TYPE_CHECKING
-from passlib.context import CryptContext
+from pwdlib import PasswordHash
 from jose import JWTError, jwt
 from cryptography.fernet import Fernet
 import base64
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from sqlalchemy.orm import Session
 
 # Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = PasswordHash.recommended()
 
 
 def hash_password(password: str) -> str:

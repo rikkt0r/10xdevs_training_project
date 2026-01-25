@@ -24,6 +24,13 @@ class EmailService:
         self.smtp_host = settings.SMTP_DEFAULT_HOST
         self.smtp_port = settings.SMTP_DEFAULT_PORT
         self.smtp_use_tls = settings.SMTP_DEFAULT_USE_TLS
+        self.smtp_user = settings.SMTP_DEFAULT_USER or None
+        self.smtp_password = settings.SMTP_DEFAULT_PASSWORD or None
+
+    @property
+    def _has_auth(self) -> bool:
+        """Check if SMTP authentication credentials are configured."""
+        return bool(self.smtp_user and self.smtp_password)
 
     async def send_email(
         self,
@@ -46,7 +53,7 @@ class EmailService:
         """
         try:
             message = MIMEMultipart()
-            message["From"] = from_email or f"noreply@{self.smtp_host}"
+            message["From"] = from_email or self.smtp_user or f"noreply@{self.smtp_host}"
             message["To"] = to_email
             message["Subject"] = subject
 
@@ -59,13 +66,19 @@ class EmailService:
                 logger.info(f"[EMAIL] Body:\n{body}")
                 return True
 
-            # Production: send actual email
-            await aiosmtplib.send(
-                message,
-                hostname=self.smtp_host,
-                port=self.smtp_port,
-                use_tls=self.smtp_use_tls,
-            )
+            # Build SMTP connection options
+            smtp_options = {
+                "hostname": self.smtp_host,
+                "port": self.smtp_port,
+                "use_tls": self.smtp_use_tls,
+            }
+
+            # Add authentication if credentials are provided
+            if self._has_auth:
+                smtp_options["username"] = self.smtp_user
+                smtp_options["password"] = self.smtp_password
+
+            await aiosmtplib.send(message, **smtp_options)
             logger.info(f"Email sent successfully to {to_email}")
             return True
 

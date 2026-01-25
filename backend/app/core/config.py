@@ -49,10 +49,12 @@ class Settings(BaseSettings):
     # Logging
     LOG_LEVEL: str = "INFO"
 
-    # SMTP Defaults (optional)
-    SMTP_DEFAULT_HOST: str = "localhost"
-    SMTP_DEFAULT_PORT: int = 587
-    SMTP_DEFAULT_USE_TLS: bool = True
+    # SMTP Defaults (optional - leave user/password empty to disable auth)
+    SMTP_DEFAULT_HOST: str = "mailserver"
+    SMTP_DEFAULT_PORT: int = 3025
+    SMTP_DEFAULT_USER: str = ""
+    SMTP_DEFAULT_PASSWORD: str = ""
+    SMTP_DEFAULT_USE_TLS: bool = False
 
     class Config:
         env_file = ".env"
