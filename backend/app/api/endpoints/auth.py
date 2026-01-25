@@ -156,6 +156,24 @@ def verify_email(
     return MessageResponse(message="Email verified successfully")
 
 
+@router.get("/verify-email-user", status_code=status.HTTP_200_OK)
+def verify_email_user(
+    token: str,
+    db: Session = Depends(get_db)
+) -> MessageResponse:
+    """
+    Verify email with token from verification email.
+
+    - **token**: Verification token from email
+
+    Marks the email as verified.
+    """
+    # Verify token
+    manager = auth_service.verify_email_token(db, token)
+
+    return MessageResponse(message="Email verified successfully")
+
+
 @router.post("/resend-verification", status_code=status.HTTP_200_OK)
 async def resend_verification(
     request: ResendVerificationRequest,
