@@ -6,10 +6,11 @@ import api from './api';
 const standbyQueueService = {
   /**
    * Get all standby queue items
+   * May return PaginatedDataResponse
    */
   getQueueItems: async (params = {}) => {
     const response = await api.get('/standby-queue', { params });
-    return response.data;
+    return response.data; // PaginatedDataResponse has {data, pagination} at top level
   },
 
   /**
@@ -17,7 +18,7 @@ const standbyQueueService = {
    */
   getQueueItem: async (itemId) => {
     const response = await api.get(`/standby-queue/${itemId}`);
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -27,7 +28,7 @@ const standbyQueueService = {
     const response = await api.post(`/standby-queue/${itemId}/assign`, {
       board_id: boardId
     });
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -35,7 +36,7 @@ const standbyQueueService = {
    */
   retryExternal: async (itemId) => {
     const response = await api.post(`/standby-queue/${itemId}/retry`);
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -43,7 +44,7 @@ const standbyQueueService = {
    */
   discardItem: async (itemId) => {
     const response = await api.delete(`/standby-queue/${itemId}`);
-    return response.data;
+    return response.data; // DELETE returns 204 No Content
   }
 };
 

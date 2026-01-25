@@ -9,7 +9,7 @@ const inboxService = {
    */
   getInboxes: async () => {
     const response = await api.get('/inboxes');
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -17,7 +17,7 @@ const inboxService = {
    */
   getInbox: async (inboxId) => {
     const response = await api.get(`/inboxes/${inboxId}`);
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -25,7 +25,7 @@ const inboxService = {
    */
   createInbox: async (inboxData) => {
     const response = await api.post('/inboxes', inboxData);
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -33,7 +33,7 @@ const inboxService = {
    */
   updateInbox: async (inboxId, inboxData) => {
     const response = await api.put(`/inboxes/${inboxId}`, inboxData);
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -41,7 +41,7 @@ const inboxService = {
    */
   deleteInbox: async (inboxId) => {
     const response = await api.delete(`/inboxes/${inboxId}`);
-    return response.data;
+    return response.data; // DELETE returns 204 No Content
   },
 
   /**
@@ -49,7 +49,7 @@ const inboxService = {
    */
   testConnection: async (inboxId) => {
     const response = await api.post(`/inboxes/${inboxId}/test`);
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -57,7 +57,7 @@ const inboxService = {
    */
   testInboxConfig: async (inboxData) => {
     const response = await api.post('/inboxes/test', inboxData);
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   }
 };
 

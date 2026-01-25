@@ -6,10 +6,11 @@ import api from './api';
 const ticketService = {
   /**
    * Get tickets with optional filters
+   * Returns PaginatedDataResponse
    */
   getTickets: async (params = {}) => {
-    const response = await api.get('/tickets', { params });
-    return response.data;
+    const response = await api.get('/tickets/recent', { params });
+    return response.data; // PaginatedDataResponse has {data, pagination} at top level
   },
 
   /**
@@ -17,15 +18,16 @@ const ticketService = {
    */
   getTicket: async (ticketId) => {
     const response = await api.get(`/tickets/${ticketId}`);
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
    * Get tickets for a specific board
+   * Returns PaginatedDataResponse
    */
   getBoardTickets: async (boardId, params = {}) => {
     const response = await api.get(`/boards/${boardId}/tickets`, { params });
-    return response.data;
+    return response.data; // PaginatedDataResponse has {data, pagination} at top level
   },
 
   /**
@@ -36,7 +38,7 @@ const ticketService = {
       new_state: newState,
       comment
     });
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -44,7 +46,7 @@ const ticketService = {
    */
   getTicketHistory: async (ticketId) => {
     const response = await api.get(`/tickets/${ticketId}/history`);
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -52,7 +54,7 @@ const ticketService = {
    */
   deleteTicket: async (ticketId) => {
     const response = await api.delete(`/tickets/${ticketId}`);
-    return response.data;
+    return response.data; // DELETE returns 204 No Content
   }
 };
 

@@ -13,8 +13,8 @@ export const fetchBoards = createAsyncThunk(
   'boards/fetchBoards',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await boardService.getBoards();
-      return response.data;
+      const data = await boardService.getBoards();
+      return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || { message: 'Failed to fetch boards' });
     }
@@ -25,8 +25,8 @@ export const fetchBoard = createAsyncThunk(
   'boards/fetchBoard',
   async (boardId, { rejectWithValue }) => {
     try {
-      const response = await boardService.getBoard(boardId);
-      return response.data;
+      const data = await boardService.getBoard(boardId);
+      return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || { message: 'Failed to fetch board' });
     }
@@ -37,8 +37,8 @@ export const createBoard = createAsyncThunk(
   'boards/createBoard',
   async (boardData, { rejectWithValue }) => {
     try {
-      const response = await boardService.createBoard(boardData);
-      return response.data;
+      const data = await boardService.createBoard(boardData);
+      return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || { message: 'Failed to create board' });
     }
@@ -49,8 +49,8 @@ export const updateBoard = createAsyncThunk(
   'boards/updateBoard',
   async ({ boardId, boardData }, { rejectWithValue }) => {
     try {
-      const response = await boardService.updateBoard(boardId, boardData);
-      return response.data;
+      const data = await boardService.updateBoard(boardId, boardData);
+      return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || { message: 'Failed to update board' });
     }
@@ -61,8 +61,8 @@ export const archiveBoard = createAsyncThunk(
   'boards/archiveBoard',
   async (boardId, { rejectWithValue }) => {
     try {
-      const response = await boardService.archiveBoard(boardId);
-      return { boardId, ...response.data };
+      const data = await boardService.archiveBoard(boardId);
+      return { boardId, ...data };
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || { message: 'Failed to archive board' });
     }

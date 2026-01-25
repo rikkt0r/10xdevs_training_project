@@ -9,7 +9,7 @@ const settingsService = {
    */
   getProfile: async () => {
     const response = await api.get('/me');
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -17,7 +17,7 @@ const settingsService = {
    */
   updateProfile: async (profileData) => {
     const response = await api.patch('/me', profileData);
-    return response.data;
+    return response.data.data; // Extract data from DataResponse wrapper
   },
 
   /**
@@ -28,7 +28,7 @@ const settingsService = {
       current_password: currentPassword,
       new_password: newPassword
     });
-    return response.data;
+    return response.data; // MessageResponse or DataResponse, check backend
   },
 
   /**
@@ -39,7 +39,7 @@ const settingsService = {
       suspension_message: suspensionMessage,
       password: password
     });
-    return response.data;
+    return response.data; // MessageResponse or DataResponse, check backend
   },
 
   /**
@@ -49,7 +49,7 @@ const settingsService = {
     const response = await api.get('/me/export', {
       responseType: 'blob'
     });
-    return response.data;
+    return response.data; // Blob data, not wrapped
   }
 };
 
