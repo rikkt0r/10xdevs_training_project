@@ -105,7 +105,7 @@ const BoardListPage = () => {
         <h1>{t('boards.title') || 'Boards'}</h1>
         <Button variant="primary" onClick={handleCreateBoard}>
           <i className="bi bi-plus-circle me-2" />
-          {t('boards.createBoard') || 'Create Board'}
+          {t('boards.create') || 'Create Board'}
         </Button>
       </div>
 
@@ -132,7 +132,7 @@ const BoardListPage = () => {
                 icon="bi-kanban"
                 title={showArchived ? t('boards.noArchivedBoards') : t('boards.noBoards')}
                 message={showArchived ? '' : t('boards.noBoardsMessage') || 'Create your first board to get started'}
-                actionLabel={!showArchived ? t('boards.createBoard') : undefined}
+                actionLabel={!showArchived ? t('boards.create') : undefined}
                 onAction={!showArchived ? handleCreateBoard : undefined}
               />
             ) : (

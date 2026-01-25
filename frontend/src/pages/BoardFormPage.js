@@ -27,7 +27,7 @@ const BoardFormPage = () => {
   const breadcrumbs = [
     { label: t('nav.dashboard') || 'Dashboard', path: '/dashboard' },
     { label: t('nav.boards') || 'Boards', path: '/boards' },
-    { label: isEditMode ? t('boards.edit') || 'Edit Board' : t('boards.createBoard') || 'Create Board' }
+    { label: isEditMode ? t('boards.edit') || 'Edit Board' : t('boards.create') || 'Create Board' }
   ];
 
   const handleSubmit = async (values) => {
@@ -54,7 +54,7 @@ const BoardFormPage = () => {
   return (
     <ManagerLayout breadcrumbs={breadcrumbs}>
       <div className="mb-4">
-        <h1>{isEditMode ? t('boards.edit') || 'Edit Board' : t('boards.createBoard') || 'Create Board'}</h1>
+        <h1>{isEditMode ? t('boards.edit') || 'Edit Board' : t('boards.create') || 'Create Board'}</h1>
       </div>
 
       {error && (
