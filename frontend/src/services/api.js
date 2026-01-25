@@ -82,7 +82,7 @@ api.interceptors.response.use(
 
         try {
           const response = await api.post('/auth/refresh');
-          const { access_token } = response.data;
+          const { access_token } = response.data.data;
 
           localStorage.setItem('access_token', access_token);
           api.defaults.headers.common.Authorization = `Bearer ${access_token}`;
