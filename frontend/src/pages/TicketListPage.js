@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchTickets, setFilters, clearFilters } from '../store/slices/ticketsSlice';
 import ManagerLayout from '../components/layout/ManagerLayout';
 import Card from '../components/common/Card';
-import Button from '../components/common/Button';
 import Spinner from '../components/common/Spinner';
 import EmptyState from '../components/common/EmptyState';
 import Alert from '../components/common/Alert';

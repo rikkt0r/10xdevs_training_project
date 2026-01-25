@@ -20,23 +20,23 @@ const InboxFormPage = () => {
   const isEditMode = !!inboxId;
 
   useEffect(() => {
+    const loadInbox = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await inboxService.getInbox(inboxId);
+        setInbox(response.data.data);
+      } catch (err) {
+        setError(err.response?.data?.error?.message || t('settings.errors.loadInboxFailed'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (isEditMode) {
       loadInbox();
     }
-  }, [inboxId, isEditMode]);
-
-  const loadInbox = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await inboxService.getInbox(inboxId);
-      setInbox(response.data.data);
-    } catch (err) {
-      setError(err.response?.data?.error?.message || t('settings.errors.loadInboxFailed'));
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [inboxId, isEditMode, t]);
 
   const breadcrumbs = [
     { label: t('nav.dashboard') || 'Dashboard', path: '/dashboard' },

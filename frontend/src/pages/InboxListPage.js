@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Row, Col } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -27,11 +27,7 @@ const InboxListPage = () => {
   const [testResult, setTestResult] = useState(null);
   const [testLoading, setTestLoading] = useState(false);
 
-  useEffect(() => {
-    loadInboxes();
-  }, []);
-
-  const loadInboxes = async () => {
+  const loadInboxes = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -42,7 +38,11 @@ const InboxListPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
+
+  useEffect(() => {
+    loadInboxes();
+  }, [loadInboxes]);
 
   const breadcrumbs = [
     { label: t('nav.dashboard') || 'Dashboard', path: '/dashboard' },

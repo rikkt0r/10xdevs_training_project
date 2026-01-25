@@ -11,7 +11,7 @@ import Button from '../components/common/Button';
 import Spinner from '../components/common/Spinner';
 import Alert from '../components/common/Alert';
 import Timeline from '../components/common/Timeline';
-import { formatDateTime, formatRelativeDate } from '../utils/dateUtils';
+import { formatRelativeDate } from '../utils/dateUtils';
 import { getStateBadgeVariant, getStateLabel, getValidTransitions, getSourceLabel, getSourceIcon } from '../utils/ticketUtils';
 import StateChangeModal from '../components/tickets/StateChangeModal';
 
